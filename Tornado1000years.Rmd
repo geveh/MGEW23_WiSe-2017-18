@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## What can we say about the probabilities of observing multiple 1,000-year tornadoes in thousand years?
 
-Create of a time series
+Creat a time series
 
 ```{r Tornados}
 y <- runif(1000)
