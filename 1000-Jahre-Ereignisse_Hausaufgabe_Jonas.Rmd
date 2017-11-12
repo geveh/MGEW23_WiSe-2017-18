@@ -1,0 +1,59 @@
+---
+output:
+  slidy_presentation: default
+  beamer_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Wahrscheinlichkeit für 1000-jährige Ereignisse
+
+Ein 1000-jähriges Ereignis tritt durchschnittlich einmal in 1000 Jahren auf. Ziel dieser Übung ist es zu berechnen, wie wahrscheinlich das Auftreten einer bestimmten Anzahl 1000-jähriger Ereignisse innerhalb von 1000 Jahren ist.
+
+Zunächst wird die Wahrscheinlichkeit des Auftretens mindestens eines Ereignisses innerhalb von 1000 Jahren berechnet. Dies lässt sich über die Gegenwahrscheinlichkeit berechnen mit
+
+n = Anzahl der Jahre
+
+p = Wahrscheinlichkeit für das Auftreten in einem Jahr
+
+f = Gegenwahrscheinlichkeit
+
+```{r}
+n <- 1000
+p <- 1/n
+f <- (1-p)^n
+1-f
+```
+
+Ergebnis: Zu 63.23% tritt ein 1000-Jahre-Ereignis innerhalb von 1000 Jahren mindestens einmal auf
+
+
+Um die Wahrscheinlichkeit für eine bestimmte Anzahl an Ereignissen innerhalb von 1000 Jahren zu erhalten, wird ein statistischer Ansatz gewählt.
+Zuerst lässt man den Computer 1.000.000 Zufallszahlen zwischen 0 und 1 generieren (eine pro Jahr) und in einer 1000x1000-Matrix niederschreiben (festgelegt durch die Spaltenanzahl ncol). So simuliert man den Zeitraum von 1000 Jahren 1000 mal:
+
+```{r}
+m <- matrix(runif(1000000),ncol=1000)
+```
+
+Jede simulierte Zahl, die größer oder gleich 0.999 ist, entspricht einem Jahr in dem ein Ereignis stattfindet. Diese Zahlen, die einem Ereignis entsprechen, werden nun für jede Zeile der Matrix gesucht und addiert:
+
+```{r}
+g <- rowSums(m>=0.999)
+```
+
+Das Ergebnis wird als geplottete Tabelle ausgegeben:
+
+
+
+```{r}
+plot(table(g),
+     xlab = "Anzahl der Ereignisse",
+     ylab = "Anzahl 1000-jähriger Zeiträume")
+```
+
+
+
+
+Das Ergebnis variiert, wenn man die Zahlen neu simulieren lässt. Die Variation kann verringert werden, wenn man die Anzahl der simulierten Zahlen erhöht.
