@@ -1,0 +1,63 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+###Marie Bonitz
+###Übung 1: Tornados
+
+## The 1,000-year tornado occurs at least onces in a thousand years with >60% probability.
+**Verification of this statement:**
+
+To calculate the probability of observing **at least one** event we have to determine the inverse probability of observing **none**.
+
+```{r one occurance of 1000a event}
+# set number of years
+n <- 100
+# set annual exceedence probability
+p <- 1/n
+# probability of no 1,000-year event in 1000 years
+(1-p)^n
+```
+The result is the probability for no 1,000-year tornado to occur.
+
+The probability for at least one tornado to occur is 63%. 
+**Statement verified!**
+
+## What can we say about the probabilities of observing multiple 1,000-year tornadoes in thousand years?
+
+To find out the different probabilities for multiple events we have to simulate a time series.
+
+```{r more than one occurance of 1000a event_1}
+# generation of thousand random numbers
+y <- runif(1000)
+# counting all numbers >=0.999
+(obs <- sum(y >= 0.999))
+```
+The result is the number of 1,000-year tornadoes that occured in this simulation. If we would generate new numbers and count them, another number of hurricanes could be our result.
+
+Now we repeat this simulation 1000 times to calculate the precise probabilities.
+
+```{r more than one occurance of 1000a event_2}
+# generate 1000 time series and list it column-wise
+y_long <- matrix(runif(1e6), ncol = 1000)
+# compute the column sums
+obs_long <- colSums(y_long >= 0.999)
+```
+The result ist a large matrix with 1 million elements.
+
+For a better presentation of the distribution we plot the results.
+
+```{r plot the result}
+plot(table(obs_long), lwd = 10,
+     main = "Simulated 1,000-year Tornadoes",
+     col = "blue",
+     xlab = "Tornado count",
+     ylab = "Frequency",
+     cex.lab = 1.5, cex.main = 1.5)
+```
+    
+The probability to observe one 1,000-year tornado in 1000 years should usually be the highest. Though it is possible, that some distributions diverge from that.  
+
+
+
+
