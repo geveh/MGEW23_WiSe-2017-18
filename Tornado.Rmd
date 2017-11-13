@@ -1,0 +1,35 @@
+---
+title: '##**Probability for a 1000 year tornado within 1000 years**##'
+author: "Pablo Kaiser"
+date: "Monday, November 13, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+###**To model the probability for a  1000 years tornado within 1000 years**### 
+####**1. Generate 1,000 years of random uniform numbers**
+```{r}
+y <- runif(1000)
+```
+ 
+####**2. Create 1,000 time series, each with 1,000 years and store the result column-wise in a matrix**
+
+```{r}
+y_long <-matrix(runif(1e6), ncol =1000)
+```
+
+####**3. Now compute the column sums (1,000-year tornadoes)**
+
+```{r}
+obs_long <-colSums(y_long >=0.999)
+```
+####**4. And plot the tornado counts to see the distribution**
+```{r}
+plot(table(obs_long)
+     ,lwd =10,main ="Simulated 1,000-year Tornadoes"
+     ,col ="darkblue",xlab ="Tornado count"
+     ,ylab ="Frequency",cex.lab =1.5, cex.main =1.5)
+
+
+```
+
