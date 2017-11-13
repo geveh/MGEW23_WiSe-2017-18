@@ -2,8 +2,8 @@
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-###Marie Bonitz
-###Übung 1: Tornados
+### Marie Bonitz
+### Übung 1: Tornados
 
 ## The 1,000-year tornado occurs at least onces in a thousand years with >60% probability.
 **Verification of this statement:**
