@@ -1,8 +1,10 @@
 ---
-title: "1000years tornado"
+title: "1,000-years Tornadoes"
 author: "Agnieszka Kuras"
 date: "7 November 2017"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -16,16 +18,31 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r tornado}
+##What can we say about the probabilities of observing multiple 1,000-year tornadoes in thousand years?
+
+#Anzahl der betrachteten Jahren ist:
+n <- 1000
+#die jährliche Auftrittwsahrscheinlichkeit beträgt:
+p <- 1 / n
+#die Wahrscheinlichkeit, *keinen* 1,000-year Tornado in 1000 Jahren anzutreffen, beträgt:
+(1 - p) ^ n
+
+#y ist eine zufällige Anzahl des Tornadoauftretens in 1000 Jahren
 y <- runif(1000)
-Obs_long<- colSums(y_long >=0.999)
+
 (obs <- sum(y >= 0.999))
 
+#Um ein quantitatives und qualitatives Ergebnis zu bekommen, werden 1000 Experimente in Form von Matrix berechnet
 y_long <- matrix(runif(1e6), ncol = 1000)
+
+obs_long<- colSums(y_long >=0.999)
+
+#Es wird ein Diagramm erzeugt
 plot(table(obs_long), lwd = 10, 
-     main = "Simulated 1,000-year Tornadoes", 
+     main = "Simulierte 1,000-year Tornados", 
      col = "hotpink", 
-     xlab = "Tornado count",
-     ylab = "Frequency",
+     xlab = "1,000 year-Tornado - Anzahl",
+     ylab = "Frequenz",
      cex.lab = 1.5, cex.main = 1.5)
 ```
 
