@@ -1,0 +1,58 @@
+---
+title: "Definition of the Bayes' Rule"
+author: "Agnieszka Kuras"
+date: "14 November 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Bayes' Rule 
+            
+$$posterior=\frac{likelihood*prior} {evidence}$$
+**Statement**
+Anhand von seismologischen Daten stellt man fest, dass 20 % aller Erdbeben mit der Stärke über 8.5 in 50 Jahren durch vulkanische Aktivität verursacht wurde. Allgemein beträgt die Wahrscheinlichkeit eines Erdbebens mit der Stärke über 8.5 in den nächsten 50 Jahren 25 %.
+Wie wahrschenlich ist es, ein Erdbeben zu beobachten, falls ein Vulkan ausbricht?
+
+## Anwendung der Formel an dem Beispiel:
+
+A ist definiert als vulkanische Aktivität
+
+B ist definiert als Erdbeben-Event
+
+b ist definiert als kein Erdbeben-Event
+
+P ist definiert als Wahrscheinlichkeit 
+
+$$P(B|A)=\frac{P(A|B)  P(B)} {P(A|B)P(B)+P(A|b)P(b)}$$
+
+## Begriffe aus der Formel
+
+*likelihood - (P(A|B))*; das Ergebnis ist bereits bekannt gegeben, d.h. das ist die Wahrscheinlichkeit der vulkanischen Aktivität, angenommen - die Hypothese, dass ein Erdbeben mit der Stärke über 8.5, wahr ist
+
+*prior - (P(B))*; persönliche Meinung, wie wahrscheinlich für mich ist, dass in den nächsten 50 Jahren ein Erdbeben mit der Stärke über 8.5 auftritt bevor das Event stattfand und die erforderlichen Daten analysiert wurden
+
+*evidence - (P(A)=P(A|B)P(B)+P(A|b)P(b))*; die Wahscheinlichkeit mit Berücksichtigung aller Hypothesen (Event findet statt, findet NICHT statt, etc...)
+
+*posterior - (P(B|A))*; die Wahrscheinlichkeit der Hypothese mit Berücksichtigung der erhobenen Daten
+
+```{r Wildfire}
+#die Wahrscheinlichkeit, dass ein durch die vulkanische Aktivität verursachtes Erdbeben auftritt: P(A|B)
+AB <- 0.2
+
+#die Wahrscheinlichkeit, dass ein Erdbeben mit der Stärke über 8.5 in den nächsten 50 Jahren auftritt: P(B)
+B <- 0.25
+
+#die Wahrscheinlichkeit, dass ein durch KEINE vulkanische Aktivität verurscachtes Erdbeben auftritt: P(A|b) 
+Ab <- 0.8
+
+#die Wahrscheinlichkeit, dass KEIN Erdbeben mit der Stärke über 8.5 in den nächsten Jahren auftritt: P(b)
+b <- 0.75
+
+#Bestimmung von Posterior:
+( AB * B )/(( AB * B ) +( Ab * b ))
+
+```
+
