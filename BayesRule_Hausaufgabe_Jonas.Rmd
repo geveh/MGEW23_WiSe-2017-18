@@ -1,0 +1,209 @@
+---
+author: "Jonas Stock"
+date: "16 November 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+<style>
+    body .main-container {
+        min-width: 1000px;
+    }
+</style>
+
+#Das Gesetz von Bayes
+
+##Erklärung und Herleitung
+
+Mit Hilfe des Gesetz von Bayes ist es möglich, von einer bedingten Wahrscheinlichkeit auf die Wahrscheinlichkeit für die umgekehrte Bedingung zu schließen. Im folgenden wird das Gesetz hergeleitet:
+
+```{r}
+library(data.tree)
+
+prob1 <- Node$new(" ")
+  nA <- prob1$AddChild("nA")
+    nB2 <- nA$AddChild("nB")
+    B2 <- nA$AddChild("B")
+  A <- prob1$AddChild("A")
+    nB1 <- A$AddChild("nB")
+    B1 <- A$AddChild("B")
+
+SetGraphStyle(prob1, rankdir = "TB")
+SetEdgeStyle(prob1$A,
+             label = "P(A)")
+SetEdgeStyle(prob1$A$B,
+             label = "P(B|A)")
+
+plot(prob1)
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(A&B) </font>
+
+
+Das oben stehende Baumdiagramm zeigt die Wahrscheinlichkeiten für zwei verschiedene Ereignisse A und B. Zunächst gibt es zwei Äste, ob Ereignis A stattfindet ("A"), oder nicht stattfindet ("nA"). Aus diesen zwei Knoten führen dann jeweils 2 weitere Äste ab für die Wahrscheinlichkeit, ob Ereignis B stattfindet ("B"), oder nicht stattfindet ("nB"). Die Wahrscheinlichkeiten der beschrifteten Äste definieren sich wie folgt:
+
+P(A): Die Wahrscheinlichkeit, dass Ereignis A auftritt
+
+P(B|A): Die Wahrscheinlichkeit, dass Ereignis B auftritt unter der Bedingung, dass Ereignis A aufgetreten ist
+
+P(A&B): Die Wahrscheinlichkeit, dass die Ereignisse A und B aufgetreten sind
+
+P(B|A) ist die bedingte Wahrscheinlichkeit. Viele Situationen erfordern in ihrer Analyse, die Bedingung umzudrehen. Ziel ist es, die Wahrscheinlichkeit von Ereignis A unter der Bedingung, dass Ereignis B aufgetreten ist, zu berechnen:
+
+
+```{r}
+library(data.tree)
+
+prob2 <- Node$new(" ")
+  nB <- prob2$AddChild("nB")
+    nA2 <- nB$AddChild("nA")
+    A2 <- nB$AddChild("A")
+  B <- prob2$AddChild("B")
+    nA1 <- B$AddChild("nA")
+    A1 <- B$AddChild("A")
+
+
+SetGraphStyle(prob2, rankdir = "TB")
+SetEdgeStyle(prob2$B,
+             label = "P(B)")
+SetEdgeStyle(prob2$B$A,
+             label = "P(A|B)")
+
+plot(prob2)
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(B&A) </font>
+
+Dieses Baumdiagramm ist ähnlich des ersten mit dem Unterschied, dass nun das Ereignis B im ersten Schritt steht, sodass wir nun die bedingte Wahrscheinlichkeit P(A|B) auf dem entsprechenden Ast auftragen können.
+
+Die Wahrscheinlichkeiten P(A&B) und P(B&A) lassen sich beide über die Multiplikation der entsprechenden Äste berechnen:
+
+
+$$P(A\&B) = P(A) \cdot P(B|A)$$
+
+
+
+$$P(B\&A) = P(B) \cdot P(A|B)$$
+
+
+
+
+
+Die Wahrscheinlichkeit von A und B ist logischerweise identisch mit der Wahrscheinlichkeit von B und A:
+
+
+
+
+$$P(A\&B) = P(B\&A)$$
+
+$$P(A) \cdot P(B|A) = P(B) \cdot P(A|B)$$
+
+Schlussendlich lässt sich nach der gesuchten bedingten Wahrscheinlichkeit P(A|B) umstellen:
+
+$$P(A|B) = \frac{P(A) \cdot P(B|A)}{P(B)}$$
+
+
+##Beispiel
+
+In vielen Fällen kann das Verhalten der Tierwelt ein Anzeichen auf bevorstehende Naturkatastrophen sein. So begeben sich Elefanten zB bereits vor einem Tsunami ins Landesinnere.
+
+Vögel und Fledermäuse können das Erdmagnetfeld wahrnehmen. Da einem Erdbeben immer eine leichte Änderung des Magnetfeldes nahe des Epizentrums vorangeht, wird angenommen, dass man durch verändertes Flugverhalten von Vögeln und Fledermäusen auf ein bevorstehendes Erdbeben schließen kann. Im Ramen der ICARUSinitiative werden derzeit Bewegungsdaten von Vögeln gesammelt.
+
+Angenommen: In einigen Jahren gibt es insgesamt 500.000 Datensätze zum Fluverhalten von Vögeln zur Auswertung. In diesem Zeitraum gab es insgesamt 600 M>6 Erdbeben. 90% dieser Erdbeben ging ein verändertes Flugverhalten nahe des Epizentrums voran. Allerdings wurde in 2000 Datensätzen ein verändertes Flugverhalten beobachtet, ohne dass ein Erdbeben folgte.
+
+In einem Gebiet wird nun ein verändertes Flugverhalten beobachtet. Mit welcher Wahrscheinlichkeit wird es dort in der kommenden Woche ein Erdbeben geben? In dem entsprechenden Gebiet gibt es durchschnittlich alle 3 Jahre ein Erdbeben.
+
+P(E): Die Wahrscheinlichkeit, dass ein Erdbeben auftritt
+
+P(kE): Die Wahrscheinlichkeit, dass kein Erdbeben auftritt
+
+P(F): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt
+
+P(F|E): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt unter der Bedingung, dass ein Erdbeben folgt
+
+P(F|kE): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt unter der Bedingung, dass kein Erdbeben folgt
+
+P(E|F): Die Wahrscheinlichkeit, dass ein Erdbeben auftritt unter der Bedingung, dass verändertes Flugverhalten vorangegangen ist. Gesuchte Größe.
+
+```{r}
+library(data.tree)
+
+prob3 <- Node$new(" ")
+  kE <- prob3$AddChild("kE")
+    kF1 <- kE$AddChild("kF")
+    F1 <- kE$AddChild("F")
+  E <- prob3$AddChild("E")
+    kF2 <- E$AddChild("kF")
+    F2 <- E$AddChild("F")
+
+SetGraphStyle(prob3, rankdir = "TB")
+
+SetEdgeStyle(prob3$E,
+             label = "P(E)")
+SetEdgeStyle(prob3$kE,
+             label = "P(kE)")
+SetEdgeStyle(prob3$E$F,
+             label = "P(F|E)")
+SetEdgeStyle(prob3$kE$F,
+             label = "P(F|kE)")
+
+plot(prob3)
+
+
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(kE&F) </font> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(E&F) </font>
+
+$$P(E) = \frac{1}{3 \cdot 52} = \frac{1}{156}$$
+
+$$P(kE) = 1 - P(E) = \frac{155}{156}$$
+
+$$P(F|E) = 0,9$$
+
+$$P(F|kE) = \frac{2000}{500000}$$
+
+$$P(F) = P(kE\&F) + P(E\&F)$$
+
+$$P(F) = P(kE) \cdot P(F|kE) + P(E) \cdot P(F|E)$$
+
+$$P(F) = \frac{155}{156} \cdot \frac{2000}{500000} + \frac{1}{156} \cdot 0,9$$
+
+$$P(F) \approx 0,00974$$
+
+$$P(E|F) = \frac{P(E) \cdot P(F|E)}{P(F)}$$
+
+$$P(E|F) \approx \frac{\frac{1}{156} \cdot 0,9}{0,00974}$$
+
+
+```{r}
+
+#P(E)
+E <- 1/156
+
+#P(kE)
+kE <- 155/156
+
+#P(F|E)
+FE <- 0.9
+
+#P(F|kE)
+FkE <- 2000/500000
+
+#P(F)
+F <- E*FE+kE*FkE
+
+#P(E|F)
+(E*FE)/F
+
+
+```
+
+$$P(E|F) \approx 0,5921$$
+
+Mit einer Wahrscheinlichkeit von etwa 59,21% gibt es in diesem Gebiet in der kommenden Woche ein Erdbeben, nachdem ein verändertes Flugverhalten der Vögel beobachtet worden ist.
+
+
+
+
+
