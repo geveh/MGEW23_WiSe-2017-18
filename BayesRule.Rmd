@@ -1,0 +1,71 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Marie Bonitz
+
+15.11.2017
+
+# Das Bayes Theorem
+
+Das Bayes-Theorem gibt an mit welcher Wahrscheinlichkeit ein Ereignis A, unter der Vorraussetzung eines anderen Ereignis B, auftritt. Es lässt sich also die **bedingte Wahrscheinlichkeit P(A|B)** berechnen.
+
+#### P(A|B)= (P(B|A)P(A))/P(B) mit P(B)= P(B|A)P(A)+P(B|A)P(A)
+
+übersetzt:
+Posterior= (Likelihood*Prior)/Evidence
+
+Welches Ereignis von beiden zuerst auftritt, d.h. die zeitliche Komponente, spielt keine Rolle. 
+Wichtig ist, dass die Wahrscheinlichkeit des Prior möglichst genau bekannt ist, da schon geringe Abweichungen einen großen Einfluss auf das Ergebnis haben.
+
+
+## Anwendungsbeispiel
+
+Mit einer Wahrscheinlichkeit von 66% soll in den nächsten Jahren in Istanbul ein stärkeres Erdbeben stattfinden, prognostizierte ein Wissenschaftlter. Allerdings hat es sich gezeigt, dass Vorhersagen zu Erdbeben nur zu 30% richtig lagen. Mit welcher Wahrscheinlichkeit, hat der Wissenschaflter mit seiner Prognose recht?
+
+
+Anwendung der Bayes Rule:
+
+P - Wahrscheinlichkeit
+
+A - stärkeres Erdbeben in Istanbul in den nächsten Jahren
+
+B - Vorhersagen eingetroffen
+
+A - **kein** stärkeres Erdbeben in Istanbul in den nächsten Jahren
+
+Prior P(A)=0.66
+
+Likelihood P(B|A)=0.3
+
+Evidence P(B) wird berechnet aus
+
+P(B|A)=1-P(B|A)
+
+P(A)=1-P(A)
+
+daraus berechnet sich Posterior wie folgt
+
+#### P(A|B) <- (P(B|A)P(A))/(P(B|A)P(A)+P(B|A)P(A)) 
+
+und angewendet:
+
+```{r earthquake}
+# Zuordnung der Wahrscheinlichkeiten für ein Erdbeben
+A  <- 0.66
+# Zuordnung der Wahrscheinlichkeit einer wahren Prognose für ein auftretendes Erdbeben
+BA <- 0.3
+# Gegenereignis zu BA, d.h. eintreffende Prognose, dass kein Erdbeben auftritt
+Ba <- 1-BA
+# Gegeneregnis zu A, d.h. kein Erdbeben tritt auf
+a <- 1-A
+# angewendete Formel
+AB <- ((BA*A)/((BA*A)+(Ba*a)))
+```
+
+```{r Ergebnis} 
+# Anzeigen des Ergebnisses
+AB
+```
+
+Die Wahrscheinlichkeit, dass die Aussage des Wissenschaftlers eintritt liegt bei ~45%.
