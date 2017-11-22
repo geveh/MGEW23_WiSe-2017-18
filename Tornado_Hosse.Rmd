@@ -1,17 +1,19 @@
 ---
 title: "Wahrscheinlichkeiten von Tausendjährigen Ereignissen"
 output: github_document
-author: Luisa Hoße
-date: 7.11.2017
+author: Luisa Hoße, MGEW23 Quantitative Grundlagen der Analyse von Naturgefahren, Universität Potsdam
+date: 07.11.2017
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Ein 1000-jähriger Tornado tritt mit einer Wahrscheinlichkeit von über 60% mindestens einmal in 1000 Jahren ein. Stimmt das?
+Im Folgenden soll gezeigt werden, wie man Fragestellungen zu den Eintrittswahrscheinlichkeiten von Ereignissen mit R beantworten kann.
 
-Wir können die nötige Rechnung mit Hilfe des Gegenereignisses durchführen. Von der Summe aller Wahrscheinlichkeiten 1 wird die Wahrscheinlichkeit für *kein* Eintreten in 1000 Jahren subtrahiert.
+## Ein Tausendjähriger Tornado tritt mit einer Wahrscheinlichkeit von über 60% *mindestens einmal* in 1000 Jahren ein. Stimmt das?
+
+Wir können die nötige Rechnung mit Hilfe des Gegenereignisses durchführen: Von der Summe der Wahrscheinlichkeiten aller möglichen Ereignisse (=1) wird die Wahrscheinlichkeit für *kein* Eintreten in 1000 Jahren subtrahiert.
 
 ```{r cars}
 p <- 1-(999/1000)^1000
@@ -55,6 +57,3 @@ for(i in 1:v){
 plot(table(obs))
 
 ```
-
-
-test change
