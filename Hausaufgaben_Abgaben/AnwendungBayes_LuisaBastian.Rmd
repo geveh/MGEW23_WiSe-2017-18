@@ -12,13 +12,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## Megathrust-Erdbeben
-Megathrust-Erdbeben sind sehr große Erdbeben, die in Subduktionszonen auftreten, wenn sich auf großer Fläche zwei Platten so verhaken, dass sich große Spannungen aufbauen, die anschließend schlagartig abgebaut werden.
-Der Aufbau dieser großen Spannungen kostet Zeit, weshalb das Auftreten eines solchen Bebens an einer Stelle nicht unabhängig von einem zuvor an der selben Stelle aufgetretenen Beben ist. Vernachlässigt man dies, kann die Wahrscheinlichkeit des Auftreten solcher Beben simpel mit dem Satz von Bayes bestimmt werden:
-$$\text{Posterior } P(A|B) = \frac{\text{Likelihood } P(B|A) * \text{Prior } P(A)}{\text{Evidence } P(B)}
+Megathrust-Erdbeben sind sehr große Erdbeben, die in Subduktionszonen auftreten, wenn auf großer Fläche aufgebaute Spannung schlagartig freigesetzt wird. Das Verhalten von Megathrust-Erdbeben auf weltweiter Skala ist ein Poisson-Prozess, das heißt die Wahrscheinlichkeit eines Starkbebens ist immer gleich hoch und damit zeitunabhängig.
+
+Betrachtet man jedoch die Wahrscheinlichkeit des Auftretens eines Megathrust-Bebens auf einem bestimmten Abschnitt einer Störungszone, muss die Abhängigkeit u.a. von der Zeit berücksichtigt werden. Da der Aufbau der benötigten großen Spannungen zeitintensiv ist, sinkt die Wahrscheinlichkeit des Auftretens eines erneuten Megathrust-Erdbebens an derselben Stelle der Störung direkt nach einem solchen Ereignis stark.
+Diese und andere Abhängigkeiten können bei der Berechnung der Wahrscheinlichkeit eines Ereignisses berücksichtigt werden mittels des Satz von Bayes
+$$\text{Posterior } p(\kappa|D) = \frac{\text{Likelihood } p(D|\kappa) * \text{Prior } p(\kappa)}{\text{Evidence } P(D)},
 $$
+in dem $D$ die beobachteten Daten und $\kappa$ das untersuchte Ereignisse sind, da dieser die Verbundwahrscheinlichkeit (Wahrscheinlichkeit des gleichzeitigen Auftretens mehrerer Ereignisse) und die bedingte Wahrscheinlichkeit (Wahrscheinlichkeit für das Auftreten eines Ereignisses nach dem Eintreten eines anderen Ereignisses) in einer Formel zusammenfasst.
 
 
-
+####Tool zum Satz von Bayes
 ```{r megathr-EQ, echo=FALSE}
 fluidPage(
   sidebarLayout(
@@ -53,11 +56,12 @@ fluidPage(
 #textOutput("posterior", container = prior )
 ```
 
-
-### Verbesserungsmöglichkeiten
-  Eine grafische Darstellung wäre hilfreich bei der Exploration der im Satz von Bayes dargestellten Zusammenhänge. Es wäre ein 3D Plot möglich, der auf der x- und der y-Achse den Likelihood-Wert und den Prior-Wert darstellt und auf der z-Achse den entsprechenden Posterior-Wert zeigt. Alternativ könnte ein 3D-Graph mit einer Farbskala für den Posterior-Wert funktionieren.
-  Des Weiteren trüge die Vereinheitlichung der Sprache oder die Gegenüberstellung der englischen und deutschen Fachbegriffe zu einem besseren Verständnis bei.
+#### Verbesserungsmöglichkeiten
+  - Der Zusammenhang zwischen Megathrust-Erdbeben und dem Tool zum Satz von Bayes könnte klarer herausgearbeitet werden.
+  - Eine grafische Darstellung wäre hilfreich bei der Exploration der im Satz von Bayes dargestellten Zusammenhänge. Es wäre ein 3D Plot möglich, der auf der x- und der y-Achse den Likelihood-Wert und den Prior-Wert darstellt und auf der z-Achse den entsprechenden Posterior-Wert zeigt. Alternativ könnte ein 3D-Graph mit einer Farbskala für den Posterior-Wert funktionieren.
+  - Des Weiteren trüge die Vereinheitlichung der Sprache oder die Gegenüberstellung der englischen und deutschen Fachbegriffe zu einem besseren Verständnis bei.
     
-### Quellen
-  https://stackoverflow.com/questions/27121665/get-value-from-reactive-context-in-r-shiny-based-on-user-input
+#### Quellen
+  - Vorlesung "Seismic Hazards" von Fabrice Cotton (Deutsches GeoForschungsZentrum und Uni Potsdam)
+  - https://stackoverflow.com/questions/27121665/get-value-from-reactive-context-in-r-shiny-based-on-user-input
   
