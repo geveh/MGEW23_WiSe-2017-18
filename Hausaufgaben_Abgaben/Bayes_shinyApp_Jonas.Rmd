@@ -1,0 +1,193 @@
+---
+title: "Bayes Rule Shiny App - Hausaufgabe vom 21.11.17"
+author: "Jonas Stock"
+date: "26 November 2017"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+
+```{r}
+
+library(shiny)
+
+shinyUI <- fluidPage(
+  titlePanel("Bayes Rule Demonstration"),
+  sidebarLayout(
+    sidebarPanel(
+      numericInput(inputId = "prior", label = "Wert für prior", min = 0, max = 1, value = 0.00001, step = 0.00001),
+      numericInput(inputId = "likelihood", label = "Wert für likelihood", min = 0, max = 1, value = 0.95, step = 0.01),
+      selectInput(inputId = "graphstyle", label = "Art des Plots", choices = c("posterior - prior" = 1, "posterior - likelihood" = 2)),
+      radioButtons(inputId = "dl", label = "file-Typ", choices = list("png", "pdf")),
+      downloadButton(outputId = "down", label = "Download Plot")
+    ),
+    mainPanel(
+      tabsetPanel(type = "tab",
+                  tabPanel("Erklärung",
+                           tags$div(
+                             "Die Regel von Bayes erlaubt es, bei bedingten Wahrscheinlichkeiten die Bedingungen umzukehren:",
+                             tags$br(),
+                             tags$br(),
+                             "P(A): Wahrscheinlichkeit, dass Ereignis A auftritt (prior)",
+                             tags$br(),
+                             "P(B): Wahrscheinlichkeit, dass Ereignis B auftritt (evidence)",
+                             tags$br(),
+                             "P(A|B): Wahrscheinlichkeit von Ereignis A unter der Bedingung, dass Ereignis B aufgetreten ist (posterior)",
+                             tags$br(),
+                             "P(B|A): Wahrscheinlichkeit von Ereignis B unter der Bedingung, dass Ereignis A aufgetreten ist (likelihood)",
+                             tags$br(),
+                             tags$br(),
+                             "P(A|B) = P(B|A) * P(A) / P(B)",
+                             tags$br(),
+                             "posterior = likelihood * prior / evidence"
+                           )
+                  ),
+                  tabPanel("Beispiel",
+                           tags$div(
+                             "Magician Michelle says that she can predict large megathrust earthquakes... well, at least 95% of the time. Assume that these earthquakes occur with a probability of 0.00001. How likely will Michelle cause a false alarm with her next prediction?",
+                             tags$br(),
+                             tags$br(),
+                             "P(A): Wahrscheinlichkeit, dass ein Erdbeben auftritt (prior)",
+                             tags$br(),
+                             "P(B): Wahrscheinlichkeit, dass Michelle ein Erdbeben voraussagt (evidence)",
+                             tags$br(),
+                             "P(B|A): Wahrscheinlichkeit, dass Michelle ein Erdbeben voraussagt unter der Bedingung, dass ein Erdbeben passieren wird (likelihood)",
+                             tags$br(),
+                             "P(A|B): Wahrscheinlichkeit, dass ein Erdbeben passiert unter der Bedingung, dass Michelle es vorausgesagt hat (posterior) -> gesuchte Größe",
+                             tags$br(),
+                             tags$br(),
+                             "P(A) = 0.00001",
+                             tags$br(),
+                             "P(B|A) = 0.95",
+                             tags$br(),
+                             "P(B) = P(B|A) * P(A) + (1 - P(B|A)) * (1-P(A))",
+                             tags$br(),
+                             "P(B) = 0.95 * 0.00001 + 0.05 * 0.99999",
+                             tags$br(),
+                             "P(B) = 0.0500009",
+                             tags$br(),
+                             "P(A|B) = P(B|A) * P(A) / P(B)",
+                             tags$br(),
+                             "P(A|B) = 0.95 * 0.00001 / 0.0500009",
+                             tags$br(),
+                             "P(A|B) = 0.000189997",
+                             tags$br(),
+                             tags$br(),
+                             "Die Wahrscheinlichkeit, dass nach Michelles Vorhersage ein Erdbeben passiert, beträgt etwa 0.019%. Die Wahrscheinlichkeit für einen falschen Alarm durch ihre Vorhersage beträgt also 99.981%."
+                             
+                           )
+                           
+                           
+                           
+                           ),
+                  tabPanel("Rechner", tableOutput("tablecalc"),
+                           textOutput("posterior")
+                           ),
+                  tabPanel("Plots", plotOutput("graph"))
+      )
+    )
+  )
+)
+
+shinyServer <- function(input, output){
+  
+  output$posterior <- renderText({
+    A <- input$prior
+    BA <- input$likelihood
+    paste("Für ein gegebenes Prior von", A, "und eine gegebene Likelihood von", BA, " ergibt sich eine posterior-Wahrscheinlichkeit von", (BA*A)/((BA*A)+((1-BA)*(1-A))))
+  })
+  tablevalues <- reactive({
+    A <- input$prior
+    BA <- input$likelihood
+    
+    data.frame(
+      Name = c("Prior", "Likelihood", "Evidence", "Posterior"),
+      Wert = as.character(c(input$prior,
+                          input$likelihood,
+                          paste((BA*A)+((1-BA)*(1-A))),
+                          paste((BA*A)/((BA*A)+((1-BA)*(1-A))))
+                          ))
+    )
+    
+    
+  })
+  output$tablecalc <- renderTable({
+    tablevalues()
+  })
+  
+  output$postpriorgraph <- renderPlot({
+    BA <- input$likelihood
+    curve((BA*x)/((BA*x)+((1-BA)*(1-x))), from=0, to=1, xlab="prior", ylab="posterior")
+  })
+  output$postlikegraph <- renderPlot({
+    A <- input$prior
+    curve((A*x)/((A*x)+((1-A)*(1-x))), from=0, to=1, xlab="likelihood", ylab="posterior")
+  })
+  output$graph <- renderPlot({
+    if(input$graphstyle == 1){
+      BA <- input$likelihood
+      curve((BA*x)/((BA*x)+((1-BA)*(1-x))), from=0, to=1, xlab="prior", ylab="posterior")
+    }
+    else{
+      A <- input$prior
+      curve((A*x)/((A*x)+((1-A)*(1-x))), from=0, to=1, xlab="likelihood", ylab="posterior")
+    }
+    
+  })
+  output$down <- downloadHandler(
+    filename = function(){
+      paste("bayes",input$dl,sep=".")
+    },
+    content = function(file){
+      if(input$dl == "png")
+        png(file)
+      else
+        pdf(file)
+      if(input$graphstyle == 1){
+        BA <- input$likelihood
+        curve((BA*x)/((BA*x)+((1-BA)*(1-x))), from=0, to=1, xlab="prior", ylab="posterior")
+    }
+      else{
+        A <- input$prior
+        curve((A*x)/((A*x)+((1-A)*(1-x))), from=0, to=1, xlab="likelihood", ylab="posterior")
+    }
+      dev.off()
+      
+      
+    }
+    
+    
+    
+  )
+  
+}
+
+
+shinyApp(shinyUI, shinyServer,
+         options = list(
+    width = "100%", height = 590))
+
+```
+
+Achtung: Für Windows-Nutzer funktioniert der Download-Button nur im externen Browser!
+
+
+#Verbesserungspotential:
+- die Formeln in den Tabs "Erklärung" und "Aufgabe" wären in LaTeX-Formatierung wesentlich schöner gewesen. Leider hat withMathJax nicht funktioniert
+- als weiterer Plot wäre ein 3d-Plot mit prior und likelihood auf der x- und y-Achse und posterior auf der z-Achse möglich gewesen, dargestellt als Heatmap
+
+
+
+
+
+
+
+
+
+
