@@ -1,0 +1,55 @@
+---
+title: "homework_shiny_bayes_2017"
+author: "Frederic Brieger"
+date: "27 November 2017"
+output: html_document
+runtime: shiny
+---
+
+# Hausaufgabe Shiny App Satz von Bayes
+
+## Erklärung des Satz von Bayes
+
+Der Satz von Bayes wird verwendet um die bedingte Wahrscheinlichkeit (likelyhood) eines Ereignisses zu berechnen. Dabei wird auf ein Vorwissen zurückgegriffen, welches wir mit unserer Berechnung "updaten" wollen, sodass nach jeder Iteration der Berechnung unsere Wahrscheinlichkeit genauer wird.
+Der Satz beinhaltet vier Komponenten: Als Posterior bezeichnet man die bedingte Wahrscheinlichkeit, die unbekannt und gesucht ist. 
+Sie berechnet sich aus dem Produkt von Likelihood und Prior geteilt durch unseren Evidence.
+
+Posterior = (Likelihood * Prior) / Evidence
+
+## Geowissenschaftliches Beispiel:
+
+Am Himmel wird ein Meteorit beobachtet, der gerade in die Erdatmosphäre eintritt.
+
+Gesucht ist die Wahrscheinlichkeit dafür, dass der Meteorit in das Meer einschlägt und somit einen Tsunami auslöst. 
+Wir wissen, dass die Wahrscheinlichkeit eines Mereoriteneinschlags bei 0.01 liegt (Evidence). Ein Datensatz belegt, dass 0.001 aller Tsunamis durch einen Meteoriteneinschlag ausgelöst wurden (Likelihood). Solange wir kein weiteres Vorwissen zu der Tsunamiwahrscheinlichkeit haben können wir den Wert 0.5 eingeben. Nach der ersten Berechnung können wir diesen Wert dann anpassen.
+
+P(i|T) : Wahrscheinlichkeit Einschlag bedingt Tsunami
+P(T) : Wahrscheinlichkeit Tsunami
+```{r, echo=FALSE}
+ui <- fluidPage(
+  titlePanel("Bayes Rule in disaster research"),
+  textOutput("Text"),
+  sliderInput(inputId = "Prior", value = 0.5, label = "P(T) : Prior", min = 0, max = 1, step = 0.01),
+  numericInput(inputId = "Likelihood", value = 0.001, label = "P(i|T) : Likelihood", min = 0, max = 1, step = 0.01),
+  plotOutput("formula"))
+
+
+# Define server logic
+
+server <- function(input, output) {
+  output$formula <- renderPlot({Evidence = 0.01
+  Posterior <- (input$Prior * input$Likelihood)/Evidence
+  op <- 1-Posterior
+  slices <- c(Posterior, op)
+  lbls <- c("P(Tsumani|Impact)", "Opposite")
+  pct <- round(slices/sum(slices)*100)
+  lbls <- paste(lbls, pct) # add percents to labels 
+  lbls <- paste(lbls,"%",sep="") # ad % to labels 
+  pie(slices, labels = lbls, col = c("blue", "red"), main = "Disaster Pie Chart")
+         })
+    output$Text <- renderText("Bayes Rule for a fixed Evidence of 0.01 (Probability for Impact).")
+  
+}
+shinyApp(ui = ui, server = server)
+options = list(width = "100%", height = 550)
+```
