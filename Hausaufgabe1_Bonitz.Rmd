@@ -12,7 +12,7 @@ The Bayes Theorem explains the probability of the occurence of an event A under 
 
 Written as a function: 
 
-$$Posterior= \frac{(Likelihood*Prior)} {Evidence}$$
+$$ Posterior=\frac{(Likelihood*Prior)}{Evidence} $$
 
 ## Earthquake prediction in Istanbul
 
