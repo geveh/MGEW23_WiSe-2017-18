@@ -1,7 +1,7 @@
 ---
 title: "Der Satz von Bayes in den Naturgefahren"
-author: "Luisa, Bastian"
-date: "21 11 2017"
+author: "Luisa Hoße, Bastian Steinke"
+date: "eingereicht am 27.11.2017"
 output: html_document
 runtime: shiny
 ---
@@ -13,8 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Megathrust-Erdbeben
 Megathrust-Erdbeben sind sehr große Erdbeben, die in Subduktionszonen auftreten, wenn sich auf großer Fläche zwei Platten so verhaken, dass sich große Spannungen aufbauen, die anschließend schlagartig abgebaut werden.
 Der Aufbau dieser großen Spannungen kostet Zeit, weshalb das Auftreten eines solchen Bebens an einer Stelle nicht unabhängig von einem zuvor an der selben Stelle aufgetretenen Beben ist. Vernachlässigt man dies, kann die Wahrscheinlichkeit des Auftreten solcher Beben simpel mit dem Satz von Bayes bestimmt werden:
-$$A(B)*
+$$\text{Posterior } P(A|B) = \frac{\text{Likelihood } P(B|A) * \text{Prior } P(A)}{\text{Evidence } P(B)}
 $$
+
 
 
 ```{r megathr-EQ, echo=FALSE}
@@ -29,26 +30,31 @@ fluidPage(
               min = 0.0, max = 1, value = 1, step = 0.01)
     ),
     mainPanel(
-        output$text <- renderText({  
-    paste("Die Wahrscheinlichkeit beträgt",sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),".")
-  })  
-    )
+      output$text <- renderText({  
+       paste("Die Wahrscheinlichkeit beträgt",sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),".")
+      })  
+       )
+    
   )
 )
 
-
-#renderText([
-post<- sum((0.95*0.00001),((1-0.95)*(1-0.00001)))
-#post <- sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior)))
+           ####PLOT
+        renderPlot({
+        hist(input$likelihood, probability = TRUE, breaks = as.numeric(input$n_breaks),
+          xlab = "Duration (minutes)", main = "Geyser eruption duration")
   
-  #renderPlot({
-#  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
-#       xlab = "Duration (minutes)", main = "Geyser eruption duration")
-#  
-#  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
-#  lines(dens, col = "blue")
-#})
+        dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+        lines(dens, col = "blue")
+        })
 
 #textOutput("posterior", container = prior )
 ```
+  
+  
+### Verbesserungsmöglichkeiten
+  Eine grafische Darstellung wäre hilfreich bei der Exploration der im Satz von Bayes dargestellten Zusammenhänge. Ein Histogramm oder der Graph einer Dichtefunktion wären dabei hilfreich.
+  Des Weiteren trüge die Vereinheitlichung der Sprache oder die Gegenüberstellung der englischen und deutschen Fachbegriffe zu einem besseren Verständnis bei.
+    
+### Quellen
+  https://stackoverflow.com/questions/27121665/get-value-from-reactive-context-in-r-shiny-based-on-user-input
   
