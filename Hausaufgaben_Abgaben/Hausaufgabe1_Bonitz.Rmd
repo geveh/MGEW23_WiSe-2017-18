@@ -1,0 +1,82 @@
+---
+title: "HA 1"
+author: "MBonitz"
+date: "27 November 2017"
+output: html_document
+runtime: shiny
+---
+# The Bayes Theorem, an geoscientific application
+
+## Bayes Rule
+
+The Bayes Theorem explains the probability of the occurence of an event A under the assumption of the occurence of an event B. Therefore it is possible to determine the **conditional and joint possibilities**.
+
+Written as a function: 
+
+$$Posterior= \frac{(Likelihood*Prior)} {Evidence}$$
+
+## Earthquake prediction in Istanbul
+
+#### Question:
+
+Researchers predict, that a strong earthquake will occur in Istanbul in the next years, with a probability of 66%. Though it became apparent that only 30% of the made predictions for earthquakes were right. What is the probability that the prognosis of the researchers fulfills? What happens with the probability if we don't know how often the predicitons had come true?
+
+#### Application of the Bayes Rule:
+
+*Prior P(A)*        - strong earthquake will occur in Istanbul in the next years  
+*Evidence P(B)*     - the researchers are right with their prediction  
+*Likelihood P(B|A)* - the researchers made a right prediction about earthquakes  
+*Posterior P(A|B)*  - the predicition fulfills  
+
+The posterior can be calculated with:
+
+$$P(A|B)=\frac{P(B|A)*P(A)} {P(B|A)*P(A)+P(B|a)*P(a)}$$
+
+```{r shinyapp, echo=FALSE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Change prior and likelihood to see how it effects posterior!"),
+    
+  sidebarPanel(
+    sliderInput(
+      inputId = "like", 
+      label = "Likelihood", 
+      min = 0, 
+      max = 100, 
+      value = 30
+      ),
+    
+    sliderInput(
+      inputId = "prior", 
+      label = "Prior", 
+      min = 0, 
+      max = 100, 
+      value = 66
+      )
+     ),
+
+  mainPanel(tabsetPanel(
+    tabPanel(
+      title = "The probability for the prediction to come true is",
+      textOutput(outputId = "answerTextOutput")
+    )
+  ))
+)
+server <- function(input, output) {
+  output$answerTextOutput <- renderText({
+    #calc
+    BA <- input$like
+    A <- input$prior
+      AB <- (BA*A)/((BA*A)+((100-BA)*(100-A)))
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+With this shinyapp we can change the likelihood and posterior values and can thus answer the two questions above. If we have no informations about the likelihood it has a probability of 50%. Therefore we see that the posterior is like the prior, because we have no new information to put in the formula.
+
+## Improvements
+
+The plotting of the variables would have contributed to a better visualization of the calculation. 
+
