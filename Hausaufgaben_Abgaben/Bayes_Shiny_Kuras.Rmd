@@ -1,0 +1,111 @@
+---
+title: "Bayes' Rule"
+author: "Agnieszka Kuras"
+date: "22 November 2017"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Bayes' Rule 
+            
+$$posterior=\frac{likelihood*prior} {evidence}$$
+**Statement**
+Anhand von seismologischen Daten stellt man fest, dass 20 % aller Erdbeben mit der Stärke über 8.5 in 50 Jahren durch vulkanische Aktivität verursacht wurde. Allgemein beträgt die Wahrscheinlichkeit eines Erdbebens mit der Stärke über 8.5 in den nächsten 50 Jahren 25 %.
+Wie wahrschenlich ist es, ein Erdbeben zu beobachten, falls ein Vulkan ausbricht?
+
+## Anwendung der Formel an dem Beispiel:
+
+A ist definiert als vulkanische Aktivität
+AB
+B ist definiert als Erdbeben-Event
+
+b ist definiert als kein Erdbeben-Event
+
+P ist definiert als Wahrscheinlichkeit 
+
+$$P(B|A)=\frac{P(A|B)  P(B)} {P(A|B)P(B)+P(A|b)P(b)}$$
+
+## Begriffe aus der Formel
+
+*likelihood - (P(A|B))*; das Ergebnis ist bereits bekannt gegeben, d.h. das ist die Wahrscheinlichkeit der vulkanischen Aktivität, angenommen - die Hypothese, dass ein Erdbeben mit der Stärke über 8.5, wahr ist
+
+*prior - (P(B))*; persönliche Meinung, wie wahrscheinlich für mich ist, dass in den nächsten 50 Jahren ein Erdbeben mit der Stärke über 8.5 auftritt bevor das Event stattfand und die erforderlichen Daten analysiert wurden
+
+*evidence - (P(A)=P(A|B)P(B)+P(A|b)P(b))*; die Wahscheinlichkeit mit Berücksichtigung aller Hypothesen (Event findet statt, findet NICHT statt, etc...)
+
+*posterior - (P(B|A))*; die Wahrscheinlichkeit der Hypothese mit Berücksichtigung der erhobenen Daten
+
+```{r Wildfire}
+#die Wahrscheinlichkeit, dass ein durch die vulkanische Aktivität verursachtes Erdbeben auftritt: P(A|B)
+AB <- 0.2
+
+#die Wahrscheinlichkeit, dass ein Erdbeben mit der Stärke über 8.5 in den nächsten 50 Jahren auftritt: P(B)
+B <- 0.25
+
+#die Wahrscheinlichkeit, dass ein durch KEINE vulkanische Aktivität verurscachtes Erdbeben auftritt: P(A|b) 
+Ab <- 0.8
+
+#die Wahrscheinlichkeit, dass KEIN Erdbeben mit der Stärke über 8.5 in den nächsten Jahren auftritt: P(b)
+b <- 0.75
+
+#Bestimmung von Posterior:
+( AB * B )/(( AB * B ) +( Ab * b ))
+
+posterior <- ( AB * B )/(( AB * B ) +( Ab * b ))
+
+  
+
+
+
+```
+
+
+
+```{r posterior, echo=FALSE}
+
+inputPanel(
+  
+  numericInput("B", label = "Prior P(B):",
+                 value = 0.25, min = 0, max = 1, step = 0.01, width = NULL),
+               
+  numericInput("AB", label = "Likelihood P(A|B):",
+                  min = 0.0, max = 1, value = 0.2, step = 0.01)
+
+  
+  
+)
+
+    mainPanel(
+      output$text <- renderText({
+       paste("Posterior beträgt", sum((input$AB*input$B)/((input$AB*input$B)+((1-input$AB)*(1-input$B)))), ".")
+      })
+      
+  
+     
+)
+  
+
+
+
+
+
+ 
+ 
+ 
+```
+ 
+ 
+#                        Was könnte man zusätzlich darstellen?
+
+Man könnte eine Tabelle erstellen mit prior und likelihood in z.B. 10%-Schritten und als Ergebnis posterior eingeben. 
+Als nächstes könnte man prior und likelihood zusammenploten und interaktiv die jeweiligen Werte ändern und somit das Ergebnis des posteriors anzeigen lassen.
+
+
+
+
+
+
