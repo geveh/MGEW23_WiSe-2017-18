@@ -1,0 +1,71 @@
+---
+title: "Bayes Theorem"
+author: "Tobias Sieg"
+date: "27 November 2017"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(RColorBrewer)
+library(reshape2)
+```
+
+
+Initial values here are taken from the fire caused by lightning example.
+
+```{r, echo=FALSE}
+inputPanel(
+
+  numericInput("Pr", label = "Prior",
+            min = 0, max = 1, value = 0.1, step = 0.1),
+  
+  numericInput("Li", label = "Likelihood",
+            min = 0, max = 1, value = 0.8, step = 0.01)
+)
+
+renderText({
+  E <- sum((input$Li*input$Pr),((1-input$Li)*(1-input$Pr)))
+  paste0("The calculated posterior probability is ",round((input$Li*input$Pr)/E,6), " (Probability that the fire was caused by a lightning given that a eyewitness claimed he/she has seen it.)")
+})
+
+
+renderPlot({
+  
+  pr <- seq(0,input$Pr,length.out = 100)
+  li <- seq(0,input$Li,length.out = 100)
+  
+  
+  pos <- matrix(NA, ncol = length(li), nrow = length(pr))       
+
+  colnames(pos) <- as.character(li)
+  rownames(pos) <- as.character(pr)
+  
+  # Calculation of Posteriors
+  for(i in c(1:length(pr))){
+   for(j in c(1:length(li))){
+     E <- sum((li[j]*pr[i]),((1-li[j])*(1-pr[i])))
+     pos[i,j] <- round((li[j]*pr[i])/E,6)
+   }
+  }
+  
+  
+  # get Posterior into usable format for ggplot
+  pos <- melt(pos)
+  
+  colnames(pos) <- c("Prior", "Likelihood", "Posterior")
+  
+  # Choose the color palette
+  hm.palette <- colorRampPalette(rev(brewer.pal(9, 'YlOrRd')), space='Lab')
+  
+  # Plot Heatmap
+  ggplot(pos, aes(x = Prior, y = Likelihood, fill = Posterior)) +
+   scale_fill_gradientn(colours = hm.palette(100), name = "Posterior") +
+   ylab('Likelihood') +
+   xlab('Prior') +
+   geom_tile()
+})
+
+```
