@@ -1,0 +1,126 @@
+---
+title: "Bernoulli und Likelihood - Hausaufgabe vom 28.11.17"
+author: "Jonas Stock"
+date: "3 December 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+Die Formel von Bernoulli ist folgende:
+
+$$P(x=k) = p^k \cdot (1-p)^{n-k}$$
+
+
+Für unseren Fall mit den Augenzeugen:
+
+n = Gesamtzahl der Augenzeugen
+
+k = Anzahl der Augenzeugen die richtig liegen
+
+n-k = Anzahl der Augenzeugen die falsch liegen
+
+p = Wahrscheinlichkeit, dass ein Augenzeuge richtig liegt
+
+P(x=k) = Likelihood
+
+Für eine Anzahl größer als ein Augenzeuge wird außerdem noch der Binomialkoeffizient n über k benötigt, um die Anzahl der möglichen Pfade zu berücksichtigen:
+
+$$\binom{n}{k} = \frac{n!}{k! \cdot (n-k)!}$$
+
+Sodass man zumindest nach meinem Verständnis letztendlich folgende Formel benötigt:
+
+$$P(x=k) = \binom{n}{k} \cdot p^k \cdot (1-p)^{n-k}$$
+
+
+
+
+
+
+```{r}
+
+#Anzahl der Balken
+h <- 100
+
+#Anzahl richtiger Augenzeugen
+k <- 189
+
+#Anzahl falscher Augenzeugen
+f <- 16
+
+#Gesamtzahl Augenzeugen
+n <- f+k
+
+#Erwartungswert prior
+
+c <- 0.2
+
+
+
+
+#Plot Prior
+
+#x-Achse
+x1 <- seq(from=0, to=1, length.out=h)
+
+#y-Achse
+y1 <- dbinom(1, size = 2, prob = x1)
+
+plot(x1,y1,type="h", lwd=4)
+
+
+
+
+#Plot Likelihood
+
+#x-Achse für zukünftigen Plot
+x2 <- seq(from=0, to=1, length.out=h)
+
+#y-Achse für zukünftigen Plot
+y2 <- dbinom(k, size = n, prob = x2)
+#y2 <- ((x2)^k)+((1-(x2))^f)
+
+plot(x2,y2,type="h", lwd=4)
+
+
+
+
+#Evidence berechnen
+
+e <- (y2*y1)+((1-y2)*(1-y1))
+
+
+
+
+#Plot posterior
+
+x3 <- seq(from=0, to=1, length.out=h)
+
+y3 <- (y2)*(y1)/e
+
+plot(x3,y3,type="h",lwd=4)
+
+
+
+
+
+
+
+
+```
+
+
+
+##Probleme
+
+Der code ist offensichtlich falsch
+
+- Als Prior wurde eine binomial-Verteilung angenommen, da die Dreiecksverteilung mit dTriangular Wahrscheinlichkeiten von größer 1 ausgab
+
+- Richtigkeit von Likelihood-plot ist auch eher fraglich. Während des Seminars wurde die Formel $\theta{}^S \cdot (1 - \theta)^{1-S}$ gegeben. Wenn $\theta$ die Wahrscheinlichkeit für einen richtigen Augenzeugen und $S$ die Anzahl der Erfolge ist, reicht die Formel für mehr als einen Augenzeugen doch nicht mehr aus, da auch noch die Anzahl der Pfade mit berücksichtigt werden muss (also Binomialkoeffizient)? Außerdem macht das $1-S$ auch nur im Falle eines Augenzeugens Sinn? Ein angewandtes Rechenbeispiel mit dieser Formel für eine gegebene Zahl an richtigen und falschen Augenzeugen während des Seminars an der Tafel wäre schön gewesen.
+
+- Posterior-plot ist falsch, da die Fläche unter der Kurve nicht 1 ergibt
