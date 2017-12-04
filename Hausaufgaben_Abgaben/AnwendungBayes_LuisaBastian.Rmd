@@ -49,7 +49,7 @@ fluidPage(
         tabPanel("Textausgabe", # Panel fuer Anzeige der Wahrscheinlichkeit als Text
              tags$div(
                 output$text <- renderText({
-                paste("Die Posterior-Wahrscheinlichkeit beträgt",sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),".")#output
+                paste("Die Posterior-Wahrscheinlichkeit beträgt",format(round((input$likelihood*input$prior)/sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))), 3), nsmall = 3), "bzw.",format(round((input$likelihood*input$prior)*100/sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))), 1), nsmall = 1),"%.")#output, auf 3 bzw. 1 Dezimalstellen runden
                 })
               )
         ),
@@ -62,7 +62,7 @@ row = 3 #Anzahl plots
 par(mfrow=c(row,1)) #alle 3 auf eine Seite
 plot(input$prior, main="Prior", type="h", xlim=c(0,1), ylim=c(0,1)) #Prior
 plot(input$likelihood, main="Likelihood", type="h", xlab=c(0,1), xlim=c(0,1), ylim=c(0,1)) #Likelihood  
-plot(sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))), main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Posterior
+plot((input$likelihood*input$prior)/sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))), main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Posterior
              })
              )
         ),
@@ -76,7 +76,7 @@ plot(sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),
         s3d <- scatterplot3d(
           x=input$prior,
           y=input$likelihood,
-          z=sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),
+          z=(input$likelihood*input$prior)/sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),
           type="h", pch=16, angle=45, grid = TRUE,
           xlab="Prior",
           ylab="Likelihood",
@@ -122,8 +122,7 @@ plot(sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),
   
 ##### Interaktives und Grafiken
   - Der 3D-Plot sollte die Oberfläche zeigen, die sich bei allen möglichen Posterior-Werten ergibt.
-  - Die 2D-Plots zeigen vermutlich die falschen Variablen an.
-  - Die Abhängigkeit der Likelihood von wahren und falschen Fällen muss implementiert werden. (Dafür einen ganz neuen Plot erstellen, damit die Inputs "Likelihood" und "Wahre/Falsche Fälle" nicht widersprechen?)
+  - Die Abhängigkeit der Likelihood von wahren und falschen Fällen muss implementiert werden. (Dafür einen ganz neuen Plot erstellen, damit die Inputs "Likelihood" und "Wahre/Falsche Fälle" sich nicht widersprechen?)
 
     
     
