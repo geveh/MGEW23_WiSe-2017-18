@@ -1,6 +1,6 @@
 ---
 title: "Der Satz von Bayes in den Naturgefahren"
-author: "Luisa Hoße"
+author: "Luisa Hoße, Bastian Steinke"
 date: "Wintersemester 2017/18"
 output: html_document
 runtime: shiny
@@ -20,67 +20,57 @@ $$\text{Posterior } p(\kappa|D) = \frac{\text{Likelihood } p(D|\kappa) * \text{P
 $$
 wobei $D$ die beobachteten Daten und $\kappa$ das untersuchte Ereignis ist beziehungsweise p($D$) und p($\kappa$) die Wahrscheinlichkeiten ihres Eintretens. Sie ergibt sich aus der Verbundwahrscheinlichkeit (Wahrscheinlichkeit des gleichzeitigen Auftretens mehrerer Ereignisse) und der bedingten Wahrscheinlichkeit (Wahrscheinlichkeit für das Auftreten eines Ereignisses nach dem Eintreten eines anderen Ereignisses).
 
-
-##Tool zum Satz von Bayes
 ```{r megathr-EQ, echo=FALSE}
 fluidPage(
+  titlePanel("Grafische Darstellung des Satz von Bayes"),
   sidebarLayout(
-    sidebarPanel(
-        numericInput("prior", label = "Prior:",
-                     value = 0.5, min = 0, max = 1, step = 0.01,
-                     width = NULL),
-  
-        sliderInput("likelihood", label = "Likelihood:",
-              min = 0.0, max = 1, value = 0.5, step = 0.01)
+  sidebarPanel(
+    numericInput(
+      "prior",
+      label = "Prior:",
+      value = 0.5,
+      min = 0,
+      max = 1,
+      step = 0.01,
+      width = NULL
     ),
-    mainPanel(
-      tabsetPanel(type = "tab",
-                  tabPanel("2D Plots",
-                           tags$div(
-                             "Die Regel von Bayes erlaubt es, bei bedingten Wahrscheinlichkeiten die Bedingungen"
-                           )
-                  ),
-                  tabPanel("3D Plot",
-                             output$plot  <-   renderPlot({
-        # install.packages("scatterplot3d") #3D plot plugin installieren (separat in Konsole ausführen)
-        library(scatterplot3d) # plugin aktivieren 
-        par(mfrow=c(1,1)) # nur ein Plot pro Seite
-        s3d <- scatterplot3d(
-          x=input$prior,
-          y=input$likelihood,
-          z=sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),
-          type="h", pch=16, angle=45, grid = TRUE,
-          xlab="Prior",
-          ylab="Likelihood",
-          zlab="Posterior",
-          color = "blue",
-          xlim=c(0,1),
-          ylim=c(0,1),
-          zlim=c(0,1),
-          main="Prior, Likelihood und Posterior", 
-          tick.marks=TRUE, #?
-          label.tick.marks = TRUE #?,
-          )
-                           )
-                  )
-      )
+    
+    sliderInput(
+      "likelihood",
+      label = "Likelihood:",
+      min = 0.0,
+      max = 1,
+      value = 0.5,
+      step = 0.01
     )
-  )
-)
-                           
-      
-      
-      
-      
-      
-       #output$text <- renderText({  
-       #paste("Die Wahrscheinlichkeit beträgt",sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),".")
-         
-       #})
-      
-      #interaktiven 3D plot einfügen
+  ),
+  mainPanel(
+    tabsetPanel(type = "tab",
+        tabPanel("Textausgabe", # Panel fuer Anzeige der Wahrscheinlichkeit als Text
+             tags$div(
+                output$text <- renderText({
+                paste("Die Posterior-Wahrscheinlichkeit beträgt",sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),".")#output
+                })
+              )
+        ),
+        
+        tabPanel("2D-Plots", # Panel mit interaktiven 2D plots
+             tags$div(
+             output$plot  <-   renderPlot({
+             ###Grafiken erstellen
+row = 3 #Anzahl plots
+par(mfrow=c(row,1)) #alle 3 auf eine Seite
+plot(input$prior, main="Prior", type="h", xlim=c(0,1), ylim=c(0,1)) #Prior
+plot(input$likelihood, main="Likelihood", type="h", xlab=c(0,1), xlim=c(0,1), ylim=c(0,1)) #Likelihood  
+plot(input$posterior, main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Posterior
+             })
+             )
+        ),
+        
+        tabPanel("3D-Plot", # Panel mit interaktiven 3D plot
+             tags$div(
       output$plot  <-   renderPlot({
-        # install.packages("scatterplot3d") #3D plot plugin installieren (separat in Konsole ausführen)
+        ####### install.packages("scatterplot3d") #3D plot plugin installieren (separat in Konsole ausführen) ##################
         library(scatterplot3d) # plugin aktivieren 
         par(mfrow=c(1,1)) # nur ein Plot pro Seite
         s3d <- scatterplot3d(
@@ -126,26 +116,22 @@ fluidPage(
                      lty = 1)
         
         })
-       )
-  )
+
+             )
+        )
+    )
 )
-  
-
-
-  
-#textOutput("posterior", container = prior )
+)
+)
 ```
-
-
 
 
 #### Verbesserungsmöglichkeiten
   - Der Zusammenhang zwischen Megathrust-Erdbeben und dem Tool zum Satz von Bayes könnte klarer herausgearbeitet werden.
-  - Eine grafische Darstellung bei der Exploration der im Satz von Bayes dargestellten Zusammenhänge wäre hilfreich. Ein 3D Plot ermöglicht es, auf der x- und der y-Achse den Likelihood-Wert beziehungsweise den Prior-Wert darzustellen, sodass auf der z-Achse der entsprechende Posterior-Wert abgelesen oder interaktiv ausgewählt und angezeigt werden kann. Alternativ ließe sich ein 3D-Graph mit einer Farbskala für den Posterior-Wert implementieren.
+  - Der 3D Plot sollte die Oberfläche zeigen, die sich bei allen möglichen Posterior-Werten ergibt.
   - Des Weiteren trüge die Vereinheitlichung der Sprache oder die Gegenüberstellung der englischen und deutschen Fachbegriffe zu einem besseren Verständnis bei.
     
 #### Quellen
   - Vorlesung _Seismic Hazards_ von Fabrice Cotton (Deutsches GeoForschungsZentrum und Uni Potsdam)
   - https://stackoverflow.com/questions/27121665/get-value-from-reactive-context-in-r-shiny-based-on-user-input
   - Mittal, H.V., 2011, _R Graphs Cookbook_, Packt Publishing
-
