@@ -62,7 +62,7 @@ row = 3 #Anzahl plots
 par(mfrow=c(row,1)) #alle 3 auf eine Seite
 plot(input$prior, main="Prior", type="h", xlim=c(0,1), ylim=c(0,1)) #Prior
 plot(input$likelihood, main="Likelihood", type="h", xlab=c(0,1), xlim=c(0,1), ylim=c(0,1)) #Likelihood  
-plot(input$posterior, main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Posterior
+plot(sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))), main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Posterior
              })
              )
         ),
@@ -81,7 +81,7 @@ plot(input$posterior, main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Pos
           xlab="Prior",
           ylab="Likelihood",
           zlab="Posterior",
-          color = "blue",
+          color = "blue", #interaktiver Punkt ist farblich unterscheidbar von statischen
           xlim=c(0,1),
           ylim=c(0,1),
           zlim=c(0,1),
@@ -90,23 +90,13 @@ plot(input$posterior, main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Pos
           label.tick.marks = TRUE #?,
           )
         
-        #plane in Plot einfuegen
-        #flaeche <- lm(input$prior~
-        #                input$likelihood +
-        #        sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior)))
-         #           )
-        
-        #Steigung der Plane
-        #flaeche <- lm(c(0.5,0.2) ~ c(0.2,0.4) + c(0.6,0.8))
-        #s3d$plane3d(flaeche)
-        
         ###Punkte einfuegen
         #tabelle mit datenpunkten erstellen, posterior ist nur platzhalter
         punkte <- data.frame(prior=seq(0,1,by=0.01),likelihood=seq(0,1,by=0.01),posterior=seq(0,1,by=0.01))
         
         #posterior fuellen
         i <- 1
-        for(i in 1:100) { 
+        for(i in 1:100) { #posterior für jede Zeile berechnen
               punkte$posterior[i] <-  sum((punkte$likelihood[i]*punkte$prior[i]),
                                           ((1-punkte$likelihood[i])*(1-punkte$prior[i])))
                         }
@@ -125,11 +115,17 @@ plot(input$posterior, main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Pos
 )
 ```
 
-
 #### Verbesserungsmöglichkeiten
+##### Text
   - Der Zusammenhang zwischen Megathrust-Erdbeben und dem Tool zum Satz von Bayes könnte klarer herausgearbeitet werden.
-  - Der 3D Plot sollte die Oberfläche zeigen, die sich bei allen möglichen Posterior-Werten ergibt.
   - Des Weiteren trüge die Vereinheitlichung der Sprache oder die Gegenüberstellung der englischen und deutschen Fachbegriffe zu einem besseren Verständnis bei.
+  
+##### Interaktives und Grafiken
+  - Der 3D-Plot sollte die Oberfläche zeigen, die sich bei allen möglichen Posterior-Werten ergibt.
+  - Die 2D-Plots zeigen vermutlich die falschen Variablen an.
+  - Die Abhängigkeit der Likelihood von wahren und falschen Fällen muss implementiert werden. (Dafür einen ganz neuen Plot erstellen, damit die Inputs "Likelihood" und "Wahre/Falsche Fälle" nicht widersprechen?)
+
+    
     
 #### Quellen
   - Vorlesung _Seismic Hazards_ von Fabrice Cotton (Deutsches GeoForschungsZentrum und Uni Potsdam)
