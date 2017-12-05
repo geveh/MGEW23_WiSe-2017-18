@@ -42,9 +42,11 @@ server <- function(input, output) {
     
   })
   
-  likelihood <- reactive(priors()^input$positives * (1-priors())^input$negatives)
-  D <- reactive(likelihood()*priors() + (1-likelihood())*(1-priors()))
-  posterior <- reactive(likelihood()*priors()/D())
+  priorprops <- reactive({priors()/sum(priors())})
+  
+  likelihood <- reactive(p_seq()^input$positives * (1-p_seq())^input$negatives*priorprops())
+  D <- reactive(likelihood()*p_seq() + (1-likelihood())*(1-p_seq()))
+  posterior <- reactive(likelihood()*p_seq()/D()*priorprops())
   
  # output$text <- renderText(priors())
   
