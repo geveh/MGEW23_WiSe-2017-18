@@ -1,0 +1,117 @@
+---
+title: "Prior-, Likelihood- und Posterior-Plots in ShinyApp - Hausaufgabe vom 05.12.17"
+author: "Jonas Stock"
+date: "10 December 2017"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+```{r}
+library(shiny)
+
+shinyUI <- fluidPage(
+  titlePanel("Prior to Posterior"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput(inputId = "accuracy", label = "Anzahl der Balken", min = 1, max = 250, value = 10, step = 1),
+      numericInput(inputId = "npositive", label = "Anzahl positiver Daten", min = 0, value = 0, step = 1),
+      numericInput(inputId = "nnegative", label = "Anzahl negativer Daten", min = 0, value = 0, step = 1),
+      radioButtons(inputId = "dl", label = "file-Typ", choices = list("png", "pdf")),
+      downloadButton(outputId = "down", label = "Download Plots")
+    ),
+    mainPanel(plotOutput("priorgraph", height = "300px"),
+              plotOutput("likegraph", height = "300px"),
+              plotOutput("postgraph", height = "300px"))
+  )
+  
+)
+
+
+shinyServer <- function(input, output){
+  
+  output$priorgraph <- renderPlot({
+    a <- input$accuracy
+    x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für priorplot
+    y1 <- pmin(x1, 1-x1) #y-Achse für priorplot
+    y1n <- y1/sum(y1) #prior-Werte auf 1 normiert
+    plot(x1, y1n, type = "h", lwd = 2, main = "Prior", xlab = "Theta", ylab = "p(Theta)")
+  })
+  
+  output$likegraph <- renderPlot({
+    a <- input$accuracy
+    np <- input$npositive
+    nn <- input$nnegative
+    nt <- np+nn
+    x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für likelihoodplot
+    y2 <- dbinom(np, size = nt, prob = x2) #y-Achse für likelihoodplot
+    plot((x2), (y2), type = "h", lwd = 2, main = "Likelihood", xlab = "Theta", ylab = "p(Theta)")
+  })
+  
+  output$postgraph <- renderPlot({
+    a <- input$accuracy #Anzahl Balken
+    np <- input$npositive #Anzahl Positive
+    nn <- input$nnegative #Anzahl Negative
+    nt <- np+nn #Gesamtzahl
+    x3 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse
+    y1 <- pmin(x3, 1-x3) #prior
+    y1n <- y1/sum(y1) #prior-Werte auf 1 normiert
+    y2 <- dbinom(np, size = nt, prob = x3) #likelihood
+    ev <- sum(y1n*y2) #evidence
+    y3 <- y1n*y2/ev #posterior
+    plot(x3, y3, type = "h", lwd = 2, main = "Posterior", xlab = "Theta", ylab = "p(Theta)")
+    
+  })
+  
+  output$down <- downloadHandler(
+    filename = function(){
+      paste("priotoposterior",input$dl,sep=".")
+    },
+    content = function(file){
+      if(input$dl == "png")
+        png(file)
+      else
+        pdf(file)
+      a <- input$accuracy #Anzahl Balken
+      np <- input$npositive #Anzahl Positive
+      nn <- input$nnegative #Anzahl Negative
+      nt <- np+nn #Gesamtzahl
+      x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für priorplot
+      y1 <- pmin(x1, 1-x1) #y-Achse für priorplot
+      y1n <- y1/sum(y1) #prior-Werte auf 1 normiert
+      x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für likelihoodplot
+      y2 <- dbinom(np, size = nt, prob = x2) #y-Achse für likelihoodplot
+      x3 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für posteriorplot
+      ev <- sum(y1n*y2) #evidence
+      y3 <- y1n*y2/ev #posterior
+      par(mfrow=c(3,1)) #stelle Plots untereinander auf einer Seite dar
+      plot(x1, y1n, type = "h", lwd = 2, main = "Prior", xlab = "Theta", ylab = "p(Theta)")
+      plot((x2), (y2), type = "h", lwd = 2, main = "Likelihood", xlab = "Theta", ylab = "p(Theta)")
+      plot(x3, y3, type = "h", lwd = 2, main = "Posterior", xlab = "Theta", ylab = "p(Theta)")
+      
+      dev.off()
+      
+      
+    }
+  )
+  
+
+  
+}
+
+shinyApp(shinyUI, shinyServer,
+         options = list(
+    width = "100%", height = 1000))
+
+```
+
+Achtung: Für Windows-Nutzer funktioniert der Download-Button nur im externen Browser!
+
+
+
+
