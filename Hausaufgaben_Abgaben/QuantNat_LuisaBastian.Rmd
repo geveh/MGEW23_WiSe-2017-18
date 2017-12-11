@@ -1,0 +1,271 @@
+---
+title: "Quantifizieren von Naturgefahren"
+author: "Luisa Hoße, Bastian Steinke"
+date: "Wintersemester 2017/18"
+output: html_document
+runtime: shiny
+references:
+- id: mosler2004
+  title: Wahrscheinlichkeitsrechnung und schließende Statistik
+  author:
+  - family: Mosler
+    given: K.
+  - family: Schmid
+    given: F.
+  container-title: Springer
+  type: book
+  issued:
+    year: 2004
+- id: mittal2011
+  title: R Graphs Cookbook
+  author:
+  - family: Mittal
+    given: H.V.
+  container-title: Packt Publishing
+  type: book
+  issued:
+    year: 2011
+---
+
+
+---
+
+``` {r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Die vorliegende Arbeit verdeutlicht, wie Wahrscheinlichkeitsrechnung bei der
+quantitativen Analyse von Naturgefahren genutzt wird.
+
+### Wahrscheinlichkeitsrechnung und Megathrust-Erdbeben
+Megathrust-Erdbeben sind sehr starke Erdbeben, die in Subduktionszonen auftreten, wenn auf großer Fläche
+aufgebaute Spannung schlagartig freigesetzt wird. Das Verhalten von
+Megathrust-Erdbeben auf weltweiter Skala ist ein Poisson-Prozess, die
+Wahrscheinlichkeit eines Starkbebens ist daher immer gleich hoch und
+zeitunabhängig (Cotton).
+
+Betrachtet man jedoch die Wahrscheinlichkeit des Auftretens eines
+Megathrust-Bebens lediglich auf einem bestimmten Abschnitt einer Störungszone
+muss die Abhängigkeit, u.a. von der Zeit, berücksichtigt werden. Da der Aufbau
+der benötigten großen Spannungen zeitintensiv ist, sinkt die Wahrscheinlichkeit
+für das Auftreten eines erneuten Megathrust-Erdbebens am selben Abschnitt der
+Störung unmittelbar nach einem solchen Ereignis stark. Für diese und andere
+Abhängigkeiten ist die __bedingte Wahrscheinlichkeit__ (_conditional
+probability_) von $A$ unter der Bedingung $B$ $$ P(A|B) = \frac{P(A\cap
+B)}{P(B)} $$ wichtig. Sie wird so interpretiert, dass $P(A|B)$ die
+Wahrscheinlichkeit dafür angibt, dass A eintritt, wenn bereits bekannt ist, dass
+$B$ eingetreten ist.
+
+Die __totale Wahrscheinlichkeit__, d.h. die nicht-bedingte Wahrscheinlichkeit
+P(B) errechnet sich mittels der Formel $$ P(B) = \sum\limits_{i=1}^n{P(B|A_i) \cdot P(A_i)}.$$
+
+Kombiniert man die Formeln der bedingten Wahrscheinlichkeit und der totalen
+Wahrscheinlichkeit, erhält man den __Satz von Bayes__ (Thomas Bayes, 1702-1761) 
+$$\text{A-posteriori-Wahrscheinlichkeit } P(A_i|B) = \frac{\text{bedingte Wahrscheinlichkeit } P(B|A_i) \cdot 
+\text{A-priori-Wahrscheinlichkeit }P(A_i)}{\text{totale Wahrscheinlichkeit }\sum\limits_{j=1}^n{P(B|A_j) \cdot P(A_j)}},  $$der bei der Berechnung der
+Wahrscheinlichkeit eines zukünftigen Ereignisses genutzt wird (@mosler2004).
+
+Im Kurs verwendeten wir die Form $$\text{Posterior } p(\kappa|D)
+= \frac{\text{Likelihood } p(D|\kappa) \cdot \text{Prior } p(\kappa)}{\text{Evidence
+} p(D)}, $$ verwendet, wobei $D$ die beobachteten Daten und $\kappa$ das
+untersuchte Ereignis sind beziehungsweise p($D$) und p($\kappa$) die
+Wahrscheinlichkeiten ihres Eintretens. Sie ergibt sich aus der
+Verbundwahrscheinlichkeit (Wahrscheinlichkeit des gleichzeitigen Auftretens
+mehrerer Ereignisse) und der bedingten Wahrscheinlichkeit (Wahrscheinlichkeit
+für das Auftreten eines Ereignisses nach dem Eintreten eines anderen
+Ereignisses).
+
+```{r megathr-EQ, echo=FALSE}
+fluidPage("",
+titlePanel("Stochastik in Grafiken"),
+  sidebarLayout(
+  sidebarPanel(
+    # Controls verändern sich mit Tabauswahl
+conditionalPanel( #Bedingung für Bayes-Controls
+  condition = "input.tabselected==1 || input.tabselected == 2 || input.tabselected == 3",
+    numericInput(
+      "prior",
+      label = "Prior:",
+      value = 0.5,
+      min = 0,
+      max = 1,
+      step = 0.01,
+      width = NULL
+    ),
+    
+    sliderInput(
+      "likelihood",
+      label = "Likelihood:",
+      min = 0.0,
+      max = 1,
+      value = 0.5,
+      step = 0.01
+    )
+  
+  ),
+
+conditionalPanel( #Bedingung für Bernoulli-Controls
+  condition="input.tabselected ==4", 
+    numericInput(
+      "numpri",
+      label = "Anzahl Priors:",
+      value = 10,
+      min = 1,
+      max = 1000,
+      step = 1,
+      width = NULL
+    ),
+    
+    numericInput(
+      "treffer",
+      label = "Anzahl Treffer:",
+      value = 0,
+      min = 0,
+      max = 1000,
+      step = 1,
+      width = NULL
+    ),
+    
+    numericInput(
+      "miss",
+      label = "Anzahl Misserfolge:",
+      value = 0,
+      min = 0,
+      max = 1000,
+      step = 1,
+      width = NULL
+    )
+  )
+    ),
+
+  mainPanel(
+    tabsetPanel(type = "tab",
+                
+        tabPanel("Textausgabe", value=1,# Panel fuer Anzeige der Wahrscheinlichkeit als Text
+             tags$div(
+                output$text <- renderText({
+                paste("Die Posterior-Wahrscheinlichkeit beträgt",format(round((input$likelihood*input$prior)/sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))), 3), nsmall = 3), "bzw.",format(round((input$likelihood*input$prior)*100/sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))), 1), nsmall = 1),"%.")#output, auf 3 bzw. 1 Dezimalstellen runden
+                })
+              )
+        ),
+        
+        tabPanel("2D-Plots", value=2,# Panel mit interaktiven 2D plots
+             tags$div(
+             output$plot  <-   renderPlot({
+             ###Grafiken erstellen
+row = 3 #Anzahl plots
+par(mfrow=c(row,1)) #alle 3 auf eine Seite
+plot(input$prior, main="Prior", type="h", xlim=c(0,1), ylim=c(0,1)) #Prior
+plot(input$likelihood, main="Likelihood", type="h", xlab=c(0,1), xlim=c(0,1), ylim=c(0,1)) #Likelihood  
+plot((input$likelihood*input$prior)/sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))), main="Posterior", type="h", xlim=c(0,1), ylim=c(0,1)) #Posterior
+             })
+             )
+        ),
+        
+        tabPanel("3D-Plot", value=3,# Panel mit interaktiven 3D plot
+             tags$div(
+      output$plot  <-   renderPlot({
+        ####### install.packages("scatterplot3d") #3D plot plugin installieren (separat in Konsole ausführen) ##################
+        library(scatterplot3d) # plugin aktivieren 
+        par(mfrow=c(1,1)) # nur ein Plot pro Seite
+        s3d <- scatterplot3d(
+          x=input$prior,
+          y=input$likelihood,
+          z=(input$likelihood*input$prior)/sum((input$likelihood*input$prior),((1-input$likelihood)*(1-input$prior))),
+          type="h", pch=16, angle=45, grid = TRUE,
+          xlab="Prior",
+          ylab="Likelihood",
+          zlab="Posterior",
+          color = "blue", #interaktiver Punkt ist farblich unterscheidbar von statischen
+          xlim=c(0,1),
+          ylim=c(0,1),
+          zlim=c(0,1),
+          main="Prior, Likelihood und Posterior", 
+          tick.marks=TRUE, #?
+          label.tick.marks = TRUE #?,
+          )
+        
+        ###Punkte einfuegen
+        #tabelle mit datenpunkten erstellen, posterior ist nur platzhalter
+        punkte <- data.frame(prior=seq(0,1,by=0.01),likelihood=seq(0,1,by=0.01),posterior=seq(0,1,by=0.01))
+        
+        #posterior fuellen
+        i <- 1
+        for(i in 1:100) { #posterior für jede Zeile berechnen
+              punkte$posterior[i] <-  sum((punkte$likelihood[i]*punkte$prior[i]),
+                                          ((1-punkte$likelihood[i])*(1-punkte$prior[i])))
+                        }
+        #punkte einsetzen
+        s3d$points3d(punkte,
+                     type = 'h',
+                     lty = 1)
+        
+        })
+
+             )
+      ),
+        tabPanel("Bernoulli", value=4,# Panel fuer Anzeige der Wahrscheinlichkeit als Text
+             tags$div(
+               output$text <- renderText({
+                paste("Bernoulli, Abgabe am 12. Dezember 2017")}),
+             output$plot  <-   renderPlot({
+# Prior
+t <- seq(from = 0, to = 1, length.out = input$numpri) # ts zwischen 0 und 1
+pt_norm <- dnorm(t, mean = 0.5, sd = 1) # normalverteilter Vektor der L?nge t
+pt <- pt_norm/sum(pt_norm) # Vektor auf 1 normiert
+
+# Likelihood
+like <- (t^input$treffer)*((1-t)^input$miss) # Ist Bernoulli-verteilt
+
+# Evidence
+evi <- sum(like*pt)
+  
+# Posterior
+post <- (like * pt) / (evi)
+               par(mfrow=c(3,1)) # Die nächsten drei Plots untereinander
+plot(t, pt, main = "Prior", type = "h", lwd = 4) # Prior
+abline(v = 0.5, col = "red")
+plot(t,like, main = "Likelihood", type = "h", lwd = 4) # Likelihood
+abline(v = 0.5, col = "red")
+plot(t, post, main = "Posterior", type = "h", lwd = 4) # Posterior
+abline(v = 0.5, col = "red")               
+              })
+              )
+        ),
+
+      id = "tabselected"
+    )
+)
+)
+)
+```
+
+### Verbesserungsmöglichkeiten
+#### Inhalt
+##### Satz von Bayes
+  - Letzter Absatz teilweise redundant.
+
+##### Bernoulli-Verteilung
+  - Erklärung zur Anwendung der Bernoulli-Verteilung - warum ist diese praktischer als andere Lösungsansätze?
+  
+##### Allgemein
+  - Die Vereinheitlichung der Sprache oder die Gegenüberstellung der englischen und deutschen Fachbegriffe zu einem besseren Verständnis bei.
+  
+#### Interaktives und Grafiken
+##### Satz von Bayes
+  - Der 3D-Plot sollte die Oberfläche zeigen, die sich bei allen möglichen Posterior-Werten ergibt.
+  - Die Abhängigkeit der Likelihood von wahren und falschen Fällen muss implementiert werden. (Dafür einen ganz neuen Plot erstellen, damit die Inputs "Likelihood" und "Wahre/Falsche Fälle" sich nicht widersprechen?)
+
+##### Bernoulli-Verteilung
+  - Überschriften zu den Plots.
+  
+##### Allgemein
+  - Überschriften innerhalb der Tabs.
+  - Tabs in Tabs?
+
+### Quellen
+Vorlesung _Seismic Hazards_ von Fabrice Cotton (Deutsches
+GeoForschungsZentrum und Uni Potsdam)
+
+https://stackoverflow.com/questions/27121665/get-value-from-reactive-context-in-r-shiny-based-on-user-input
+
+Mittal, H.V., 2011, _R Graphs Cookbook_, Packt Publishing
