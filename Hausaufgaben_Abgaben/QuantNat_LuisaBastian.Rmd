@@ -74,6 +74,11 @@ mehrerer Ereignisse) und der bedingten Wahrscheinlichkeit (Wahrscheinlichkeit
 für das Auftreten eines Ereignisses nach dem Eintreten eines anderen
 Ereignisses).
 
+### Bernoulli-Verteilung
+Die Bernoulli-Verteilung beschreibt die Wahrscheinlichkeiten von Ereignissen, die nur zwei mögliche Ausgänge haben, z.B. wahr und falsch oder ja oder nein. Die Formel der Bernoulli-Verteilung lautet
+$$ f(x) = p ^ {x} (1 - p) ^ {1 - x} \qquad \qquad x = 0, 1. $$
+
+
 ```{r megathr-EQ, echo=FALSE}
 fluidPage("",
 titlePanel("Stochastik in Grafiken"),
