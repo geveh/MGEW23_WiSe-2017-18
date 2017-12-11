@@ -1,0 +1,100 @@
+---
+title: "Interactive Plots"
+author: "Pablo Kaiser"
+date: "12 Dezember 2017"
+output: html_document
+runtime: shiny
+---
+
+####**Bayes' Theorem**  
+
+
+```{r PriorPosterior, echo=FALSE}
+library(shiny)
+
+
+
+####
+
+##Prior
+
+theta = seq(0.1,0.9,0.01)
+prior1 = dnorm(theta,0.5,0.2)
+prior = prior1/sum(prior1)
+
+
+#Likelihood
+Theta = seq(0.1,0.9,0.01)
+
+
+likelihood = function(n,k,Theta){return(Theta^k*(1-Theta)^(n))} #Theta <- Probability of success; 
+
+
+#Posterior
+
+
+ui <- fluidPage(
+  titlePanel(h4("Interaktive Plots")
+  ),
+  
+  sidebarLayout(
+    sidebarPanel(("Number of"),
+  numericInput(inputId = "k",
+                            label = "Success",
+                            value = 1, min = 0, max = 1e6, step = 1),
+  numericInput(inputId = "n",
+                             label = "Failure",
+                             value = 1, min = 0, max = 1e6, step = 1)),
+  
+  fluidRow(
+    column(3,plotOutput("Plot1", width = "250px", height = "200px")),
+    column(3,plotOutput("Plot2", width = "250px", height = "200px")),
+    column(3,plotOutput("Plot3",width = "250px", height = "200px"))
+  )
+  )
+  )
+
+  
+  
+
+server<- function(input, output){
+  
+    Posterior <- reactive({
+    Posterior1 = (likelihood(input$n,input$k,Theta)*prior)/((likelihood(input$n,input$k,Theta)*prior)+(1-likelihood(input$n,input$k,Theta))*(1-prior))
+    Posterior1/sum(Posterior1)}) # calculate the posterior
+    
+#    evidence = (likelihood*prior)+(1-like)*(1-prior)
+#Posterior1=(likelihood*prior)/evidence
+#Posterior=Posterior1/sum(Posterior1)  siehe oben, aber übersichtlicher
+
+    
+#Prior Plot    
+  output$Plot1 = renderPlot(plot(theta,prior,lwd = 1.5, main = "Prior",
+                                                                
+    col = "chartreuse4",
+     type = "h",xlim = c(0, 1), xlab = bquote(theta),
+     ylim = c(0, 1.2 * max(prior)), ylab = bquote(p(theta)),
+     cex.axis = 1.2, cex.lab = 1.5, cex.main = 2))
+#Likelihood Plot  
+    output$Plot2 = renderPlot(plot(Theta,likelihood(input$n,input$k,Theta),type = "h",, lwd = 2, main = "Likelihood",
+    
+      cex.axis = 1.2,col = "chocolate1",  cex.lab = 1.5, cex.main = 2, xlim = c(0, 1), xlab = bquote(theta),
+      ylim = c(0, 1.1 * max(likelihood(input$n,input$k,Theta))), ylab = bquote(paste("p(D|", theta, ")")),))
+ 
+#Posterior Plot
+     output$Plot3 = renderPlot(plot(theta,Posterior(),type="h",, lwd = 2, main = "Posterior",
+                                    
+     cex.axis =           1.2,col = "goldenrod3",  cex.lab = 1.5,cex.main = 2,xlim = c(0, 1), xlab =              bquote(theta), ylim = c(0, 1.1 * max(Posterior())), ylab = bquote(paste("p(", theta, "|D)"))))
+ 
+    
+}
+
+
+
+
+shinyApp(ui = ui, server = server)
+```
+  
+
+####**The Prior ist normal distributed, next steps could be the implementation of other distributions(Poisson,Binom) to reveal the effects on the posterior.**
+
