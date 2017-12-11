@@ -1,0 +1,89 @@
+---
+title: "Hausaufgabe 3"
+author: "Kuras, Bonitz"
+date: "7 Dezember 2017"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+
+```{r tabsets, echo=FALSE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Bernoulli Application"),
+  sidebarPanel(
+      numericInput(inputId = "success","Success",
+               value = 1,
+               min = 1),
+      numericInput(inputId = "failure","Failure",
+               value = 1,
+               min = 1),
+      numericInput(inputId = "numprior", "Number of Priors",
+                   value = 10,
+                   min = 1)
+  ),
+ mainPanel(tabsetPanel(
+  tabPanel(
+      title = "Graphs",
+      plotOutput("plots")
+     
+    )
+  ))
+)
+
+server <- function(input, output) {
+# Anzahl des Prior Inputs ausgeben
+  theta <- reactive({
+    numprior <- input$numprior
+    theta <- seq(0,1,1/(numprior+1))
+    theta <- theta[2:(length(theta)-1)]
+    })
+#Prior Verteilung
+  prior <- reactive({
+      prior <- pmin(theta(), 1-theta())
+      prior <- prior/sum(prior)
+    })
+  
+#berechnung der likelihood
+  likelihood <- reactive(choose((input$success+input$failure),input$success)*(theta()^input$success*(1-theta())^input$failure))
+ 
+#berechnung des posterior
+  posterior <- reactive((likelihood()*prior())/((likelihood()*prior())+((1-likelihood())*(1-prior())))) 
+ 
+  
+  output$plots <- renderPlot({
+    layout(matrix(c(1, 2, 3), nrow = 3, ncol = 1, byrow = FALSE))
+    par(mai = c(0.5, 0.5, 0.5, 0.1))
+    
+    plot(theta(),prior(),
+         type = "h",
+         main = "Prior",
+         xlab = "Theta",
+         ylab = "Prior",
+         xlim = c(0,1))
+    plot(theta(),likelihood(),
+         type = "h",
+         main = "Likelihood",
+         xlab = "Theta",
+         ylab = "Likelihood",
+         xlim = c(0,1))
+    plot(theta(),posterior(),
+         type = "h",
+         main = "Posterior",
+         xlab = "Theta",
+         ylab = "Posterior",
+         xlim = c(0,1))
+    
+
+})
+}
+
+shinyApp(ui, server)
