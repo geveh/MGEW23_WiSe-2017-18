@@ -1,0 +1,35 @@
+---
+title: "Anwendung von Renormalisierung in den Naturgefahren"
+author: "Luisa Hoße, Bastian Steinke"
+date: "19.12.2017"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Renormalisierung?
+
+$$\sum_{i=1}^{n}{p_i} =1$$
+= durch die Summe aller Wahrscheinlichkeiten dividieren
+
+-> iterativ kann gewichtetes Wachstum berechnet werden
+
+## Anwendungsbeispiel in den Naturgefahren
+### Vulkanische Aktivität
+
+Es wird eine Zunahme von seismischer Aktivität, die vom Vulkan Agung ausgeht, gemessen. Nun soll abgeschätzt werden, ob eine Evakuierung der naheliegenden Orte notwendig ist. Diese ist für den Fall einer Eruption vorgesehen. 
+
+### Wahrscheinlichkeiten
+Die Wahrscheinlichkeiten für das Eintreten der folgenden Ereignisse, die aus den vorherigen Jahrzehnten Beobachtung berechnet wurden, betragen:
+
+- Calderakollaps p($C$) = 0.2
+- große Eruption p($E_g$) = 0.15
+- kleine Eruption p($E_k$) = 0.20
+- ein non-explosives $CO_2-SO_2$-Gasgemisch entweicht p($G$) = 0.05 GILT DAS ALS ERUPTION??
+- seismische Aktivität ebbt wieder ab ohne Ereignisse p($X$) = 0.4
+
+## Anwendungsbeispiel in den Naturgefahren
+
+

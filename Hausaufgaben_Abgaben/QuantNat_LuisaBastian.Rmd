@@ -237,6 +237,9 @@ abline(v = 0.5, col = "red")
               )
         ),
 
+tabPanel("Renormalisierung",
+         tags$iframe(style="height:400px;width:100%;scrolling=yes",
+                    src="Renormalisierung_LuisaBastian.pdf")),
       id = "tabselected"
     )
 )
