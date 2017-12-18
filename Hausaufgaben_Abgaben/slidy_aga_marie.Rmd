@@ -1,0 +1,129 @@
+---
+title: "Bernoulli_Test"
+author: "Agnieszka Kuras, 
+         Marie Bonitz"
+date: "14 Dezember 2017"
+output: slidy_presentation
+fig_caption: yes
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Formeln
+
+
+
+Bayes' Rule 
+            
+$$posterior=\frac{likelihood*prior} {evidence}$$
+
+
+Bernoulli-Verteilung mit Binominal-Koeffizient
+
+$$likelihood=\frac{n!}{k!(n-k)!}*prior^k*(1-prior)^{n-k}$$
+
+## Statement
+
+![Wir verfügen über Erdbebenmessungen aus den letzten 200 Jahren. Laut der Statistikanalyse lässt sich schlussfolgern, dass ein einziges Erdbeben von Magnitude über 8 in jedem Jahrzenzten mit der Wahrcheinlichkeit von 95% auftritt. Wir sind gerade am Ende des 9. Jahres eines Jahrzehnten. In den letzten 9 Jahren gab es kein Erdbeben mit der Magnitude über 8.]
+
+###Wie hoch ist die Wahrscheinlichkeit, dass ein Erdbeben-Event in dem letzten Jahr stattfindet?###
+
+
+## Prior
+
+```{r graph Darstellung}
+#Data: eine wahre Aussage, zehn falsche
+True <- 1
+False <- 10
+
+
+
+
+#von dem zweiten Wert von Theta wird 0 angesetzt -> da Misserfolge, die Wahrscheinlichkeiten von den 9 Werten werden jeweils auf den letzten Wert verteilt  (letztes Jahr)
+noearthquake <- 0.05
+prior <- c(0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,noearthquake)
+theta <- c(1,2,3,4,5,6,7,8,9,10,11)
+# loop i sind die Anzahl an prior, es wird jeder prior von 3-11 nacheinander auf Null gesetzt und auf den Rest(Summe des neuen prior) ausummiert. 
+for (i in 1:9) {prior[i] <- 0
+prior <- prior/sum(prior)
+
+}
+
+
+#create data frame for x,y
+theta_graph <- data.frame(theta,prior)
+#plot of prior
+plot((theta_graph),
+     type = "h",
+     main="Prior",
+     xlim=c(1, 11), ylim=c(0, 1)
+    
+     )
+
+
+```
+
+Die Wahrscheinlichkeit für das Auftreten des Erdbebens is in jedem Jahr gleich hoch. Es gibt 10 mögliche Jahre in denen das Ereignis auftreten kann und die 11. Möglichkeit, dass das Erdbeben nicht auftritt. Mit den gegebenen Information ist vor Ablauf der ersten neun Jahre, die Wahrscheinlichkeit, das kein Erdbeben mit der Magnitude 8 auftritt 5%. Nach neun Jahren erhöht sich die Wahrscheinlichkeit für ein Auftreten im 10. Jahr und für ein Nicht-Auftreten proportional zu ihrer Anfangswahrscheinlichkeit. Wie in diesem Graf zu sehen beträgt die Wahrscheinlichkeit für das Erdbeben im 10 Jahr ~66% und für kein Erdbeben ~34%.\ref{theta_graph}
+
+
+
+##Likelihood nach Bernoulli-Verteilung
+```{r graph2 Darstellung}
+#Bernoulli-Verteilung mit Binominal-Koeffizient
+likelihood <- c(((factorial(True+False))/(factorial(True)*factorial(False)))*prior^True*(1-prior)^False)
+likelihood_graph <-data.frame(theta,likelihood)
+plot ((likelihood_graph),
+      type = "h",
+      main="Likelihood",
+      xlim=c(1, 11),ylim=c(0,0.06)
+    
+      )
+
+table(likelihood,theta)
+
+```
+
+
+##Posterior nach Bayes Rule
+```{r graph3 Darstellung}
+posterior <- c((likelihood*prior)/((likelihood*prior)+((1-likelihood)*(1-prior))))
+posterior_graph <-data.frame(theta,posterior)
+plot((posterior_graph),
+     type = "h",
+     main="Posterior",
+     xlim=c(1, 11),ylim=c(0,0.04)
+     )
+
+table(posterior,theta)
+
+
+```
+##Alle Plots
+```{r plots}
+par(mfrow = c(3,1))
+
+theta_graph <- data.frame(theta,prior)
+#plot of prior
+plot((theta_graph),
+     type = "h",
+     main="Prior",
+     xlim=c(1, 11),ylim=c(0, 1)
+)
+
+likelihood_graph <-data.frame(theta,likelihood)
+plot ((likelihood_graph),
+      type = "h",
+      main="Likelihood",
+      xlim=c(1, 11),ylim=c(0,0.06)
+)
+
+posterior_graph <-data.frame(theta,posterior)
+plot((posterior_graph),
+     type = "h",
+     main="Posterior",
+     xlim=c(1, 11),ylim=c(0,0.04)
+)
+```
