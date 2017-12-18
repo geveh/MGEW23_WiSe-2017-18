@@ -1,0 +1,61 @@
+---
+title: "Das Boulderproblem | Ein Beispiel aus den Naturgefahren"
+author: "Frederic Brieger"
+date: "16 Dezember 2017"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Problemstellung
+
+Eine studentische Hilfskraft ist für einen Datensatz zuständig, in welchem alle Waldbrände eines Jahres in Deutschland abgespeichert und ausgewertet werden.
+Die Analyse der vorherigen Jahren zeigt, dass 8% aller Jahre kein einziges unnatüriches Ereignis beinhalten.
+Am Ende des Jahres fällt dem Hiwi nun auf, dass der Datensatz lückenhaft ist und zu einigen Bränden die Wetterdaten fehlen, die angeben ob ein Blitz als Ursache in Frage kommt! Zudem hat es bisher keinen einzigen vermerkten unnatürlichen Waldbrand gegeben.
+
+Um eine Abschätzung darüber geben zu können ob unter diesen Ereignissen ein Waldbrand unnatürlichen Ursprungs sein könnte kramt er einen R-Code aus seinem Studium hervor.
+
+## Der Code
+
+Zuerst legen wir unsere Startparameter fest und erstellen unseren Startvektor.
+
+
+```{r echo = TRUE}
+# Startparameter
+n <- 100 # Gesamtanzahl Daten
+k <- 91 # Anzahl vollständige Ereignisse
+pU <- 0.08 # Wahrscheinlichkeit kein unnatürlicher Waldbrand
+
+pcumstart <- 1-pU # Kummulative Wahrscheinlichkeit Unatürliches Ereignis unter n Daten
+pstart <- pcumstart/n # Einzelwahrscheinlichkeit Unatürlich
+pt <- c(rep(pstart, n), pU) # Startvektor
+```
+
+## Der Code
+
+Anschließend werden die Wahrscheinlichkeiten der vollständigen Daten nacheinander 0 gesetzt und die restlichen Ereignisse wieder normalisiert.
+
+```{r echo = TRUE}
+i = 1
+while(i<k){
+  pt[i] <- 0 # i-te Stelle 0 setzen
+  pt <- pt/sum(pt) # rest von p normieren
+  i = i+1
+}
+
+```
+
+## Plot
+
+Zur besseren Visualisierung werden die Ergebnisvariablen geplottet:
+
+```{r echo = FALSE}
+plot(c(1:(n+1)), pt, type = "h", lwd = 20, lend = 1,
+     ylab = "p(t)", xlab = "p(Data 1-n, Kein unnatürliches Ereignis)", ylim = c(0,1))
+abline(0.5, 0, col = "red", lty = "dashed")
+text(30, 1, labels = (paste("P(Unnatürlicher Brand) der restlichen Daten:", as.character(round(pt[n],3)))))
+text(20, 0.93, labels = (paste("P(Kein unnatürlicher Brand):", as.character(round(pt[n+1],3)))))
+```
+
