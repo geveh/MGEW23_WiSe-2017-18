@@ -1,0 +1,268 @@
+---
+title: "Das Boulder-Problem"
+author: "Jonas Stock"
+date: "18 December 2017"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Aufgabenstellung
+
+Ein Forscher untersucht Felsen an einem Strand. Nach einer Weile fällt ihm auf, dass er sein GPS-Gerät verloren hat und nimmt an, dass es bei einem der untersuchten Felsen sein muss. 10 Felsen stehen insgesamt zur Auswahl. Nachdem er bei 9 Felsen nichts gefunden hat: Wie hoch ist die Wahrscheinlichkeit eines Fundes beim 10. Felsen, wenn er das Gerät mit einer Wahrscheinlichkeit von 5% zu Hause gelassen hat?
+
+## Lösungsansatz
+
+Auch wenn es sich hierbei im Prinzip um Ziehen ohne Zurücklegen handelt, kann keine hypergeometrische Verteilung angewendet werden, da nicht alle Wahrscheinlichkeiten im gleichen Pfadsystem wiederzufinden sind.
+
+Die Anfangswahrscheinlichkeiten sind wie folgt: Jeder der 10 Felsen hat die gleiche Wahrscheinlichkeit, das GPS-Gerät zu haben. Die Wahrscheinlichkeit, dass es bei keinem Felsen ist, beträgt 5%. Daraus ergibt sich:
+
+$$p(1.F) = \frac{0.95}{10} = 0.095$$
+
+$$p(1.K) = 0.005$$
+
+mit
+
+p(1.F) = Wahrscheinlichkeit pro Felsen
+
+p(1.K) = Wahrscheinlichkeit, dass es bei keinem Felsen ist
+
+## Lösungsansatz
+
+Wenn nun ein Felsen untersucht worden ist ohne Fund, sind somit noch 9 Felsen im Spiel sowie die Wahrscheinlichkeit, dass es nirgends ist. Summiert man die verbleibenden Wahrscheinlichkeiten auf, ergeben diese allerdings nur noch 90.5% (da ja ein 9.5%-Felsen rausgenommen wurde). Da die Wahrscheinlichkeiten aber notwendigerweise insgesamt 100% ergeben müssen, muss durch die Summe der Wahrscheinlichkeiten geteilt werden:
+
+$$p(2.F) = \frac{p(1.F)}{\sum{}p1} = \frac{0.095}{0.905} \approx 0.105$$
+
+Die Wahrscheinlichkeit, dass das GPS-Gerät beim 2. Felsen liegt, beträgt also nunmehr etwa 10.5%.
+
+## Lösungsansatz
+
+Für den 3. Felsen gilt also:
+
+$$p(2.F) = \frac{p(1.F)}{\sum{}p1} = \frac{0.095}{0.905} \approx 0.105$$
+
+$$p(2.K) = \frac{p(1.K)}{\sum{}p1} = \frac{0.005}{0.905} \approx 0.0055$$
+
+$$\sum{}p2 = 8 \cdot p(2.F) + p(2.K) = 0.8455$$
+
+$$p(3.F) = \frac{p(2.F)}{\sum{}p2} = \frac{0.105}{0.8455} \approx 0.124$$
+
+Natürlich möchte man nicht alle Zwischenschritte einzeln ausrechnen
+
+
+
+
+## Lösung mit R
+
+Zuerst die Startvariablen festlegen
+
+```{r, include = TRUE}
+
+n <- 10 #Anzahl der Felsen
+pf0 <- 0.095 #Anfangswahrscheinlichkeit pro Felsen
+pk0 <- 0.05 #Anfangswahrscheinlichkeit für keinen Fund insgesamt
+
+```
+
+
+## Lösung mit R
+
+Werte berechnen
+```{r}
+pf1 <- pf0/((n-1)*pf0+pk0)
+pk1 <- pk0/((n-1)*pf0+pk0)
+pf2 <- pf1/((n-2)*pf1+pk1)
+pk2 <- pk1/((n-2)*pf1+pk1)
+pf3 <- pf2/((n-3)*pf2+pk2)
+pk3 <- pk2/((n-3)*pf2+pk2)
+pf4 <- pf3/((n-4)*pf3+pk3)
+pk4 <- pk3/((n-4)*pf3+pk3)
+pf5 <- pf4/((n-5)*pf4+pk4)
+pk5 <- pk4/((n-5)*pf4+pk4)
+pf6 <- pf5/((n-6)*pf5+pk5)
+pk6 <- pk5/((n-6)*pf5+pk5)
+pf7 <- pf6/((n-7)*pf6+pk6)
+pk7 <- pk6/((n-7)*pf6+pk6)
+pf8 <- pf7/((n-8)*pf7+pk7)
+pk8 <- pk7/((n-8)*pf7+pk7)
+pf9 <- pf8/((n-9)*pf8+pk8)
+pk9 <- pk8/((n-9)*pf8+pk8)
+pf10 <- pf9/((n-10)*pf9+pk9)
+pk10 <- pk9/((n-10)*pf9+pk9)
+```
+
+
+## Lösung mit R
+
+Ergebnisse darstellen:
+
+```{r}
+
+E <- matrix(
+  c(pf0,pf1,pf2,pf3,pf4,pf5,pf6,pf7,pf8,pf9,pk0,pk1,pk2,pk3,pk4,pk5,pk6,pk7,pk8,pk9),
+  ncol=2,
+  byrow=FALSE
+)
+
+E
+
+```
+
+## Lösung mit R
+
+Die Wahrscheinlichkeit, dass das GPS-Gerät unter dem 10. Felsen liegt, beträgt also etwa 65.5%
+
+Da für die Lösung nicht nach den Zwischenschritten gefragt ist, geht es auch einfacher:
+
+Erneut die Startvariablen festlegen:
+
+```{r}
+
+n <- 10 #Anzahl der Felsen
+pf0 <- 0.095 #Anfangswahrscheinlichkeit pro Felsen
+pk0 <- 0.05 #Anfangswahrscheinlichkeit für keinen Fund insgesamt
+
+```
+
+
+
+## Lösung mit R
+
+Mit pg wird nun eine Zahlenfolge definiert, in der die Wahrscheinlichkeiten für jeden Felsen und die Wahrscheinlichkeit keines Fundes aufgelistet sind:
+
+```{r}
+
+pg <- c(rep(pf0, n), pk0)
+
+pg
+
+```
+
+## Lösung mit R
+
+Mit der Zahlenreihe pg wird nun gerechnet.
+Die Werte der Zahlenreihe sollen nach und nach bearbeitet werden. Dazu wird i definiert als Stelle in der Zahlenfolge.
+
+"i=1"" bedeutet, dass mit der ersten Stelle gestartet werden soll.
+
+"pg[i] <- 0"" bedeutet, dass die Stelle "i" (also im ersten Fall die erste Stelle) in der Zahlenfolge pg genommen werden soll und gleich null gesetzt werden soll
+
+"pg <- pg/sum(pg)"" bedeutet, dass die einzelnen Wahrscheinlichkeiten danach wieder durch die Summe aller Wahrscheinlichkeiten geteilt werden sollen. Das ist wichtig, damit die Summe aller Wahrscheinlichkeiten wieder 1 ergibt
+
+"while(i<10)" bedeutet, dass diese Operation so lange durchgeführt werden soll, bis man an der neunten Stelle in der Zahlenfolge angekommen ist.
+
+"i=i+1" bedeutet, dass am Ende jeder Operation zur nächsten Stelle in der Zahlenfolge gegangen werden soll.
+
+## Lösung mit R
+
+
+```{r}
+i = 1
+while (i<10) {
+  pg[i] <- 0
+  pg <- pg/sum(pg)
+  i = i+1
+}
+
+pg
+```
+
+Wie man sieht erhält man dadurch eine Zahlenfolge. Die ersten 9 Werte betragen null (das sind die Wahrscheinlichkeiten der ersten neun Felsen). Danach kommt die Wahrscheinlichkeit für den letzten Felsen und als letzter Wert die Wahrscheinlichkeit keines Funds.
+
+
+## Eigenes Beispiel
+
+Ein Dorf liegt an einem Hang. Der Hang ist schon durch mehrfache Hangrutschen bekannt, die Schäden an manchen Häusern verursacht haben. Ein Team fährt los, um herauszufinden ob man den Hang an gewissen Stellen stabilisieren kann. Diese Stellen wurden im Vorfeld bestimmt und haben alle die gleiche Wahrscheinlichkeit. Nachdem 19 von 25 Stellen untersucht worden sind, hat man noch keine gute Stelle gefunden. Wie groß ist jeweils die Wahrscheinlichkeit, an den nächsten Stellen einen Punkt zum stabilisieren zu finden? Erfahrungsgemäß gibt es nur bei 30% solcher Hänge überhaupt eine Möglichkeit, diese effektiv zu stabilisieren.
+
+```{r}
+
+pF <- 1-0.3 #Die Wahrscheinlichkeit, dass der Hang nicht stabilisiert werden kann
+n2 <- 25 #Anzahl der Stellen
+pS <- 0.3/25 #Die Wahrscheinlichkeit pro Punkt, dass dieser stabilisiert werden kann
+
+prow20 <- c(rep(pS, n2), pF)
+prow21 <- c(rep(pS, n2), pF)
+prow22 <- c(rep(pS, n2), pF)
+prow23 <- c(rep(pS, n2), pF)
+prow24 <- c(rep(pS, n2), pF)
+prow25 <- c(rep(pS, n2), pF)
+```
+
+## Eigenes Beispiel
+
+```{r}
+i=1
+while (i<20) {
+  prow20[i] <- 0
+  prow20 <- prow20/sum(prow20)
+  i=i+1
+}
+
+i=1
+while (i<21) {
+  prow21[i] <- 0
+  prow21 <- prow21/sum(prow21)
+  i=i+1
+}
+
+i=1
+while (i<22) {
+  prow22[i] <- 0
+  prow22 <- prow22/sum(prow22)
+  i=i+1
+}
+
+i=1
+while (i<23) {
+  prow23[i] <- 0
+  prow23 <- prow23/sum(prow23)
+  i=i+1
+}
+
+i=1
+while (i<24) {
+  prow24[i] <- 0
+  prow24 <- prow24/sum(prow24)
+  i=i+1
+}
+
+i=1
+while (i<25) {
+  prow25[i] <- 0
+  prow25 <- prow25/sum(prow25)
+  i=i+1
+}
+
+```
+
+## Eigenes Beispiel
+
+```{r}
+
+HR <- matrix(
+  c(prow20[20],prow21[21],prow22[22],prow23[23],prow24[24],prow25[25],prow20[26],
+    prow21[26],prow22[26],prow23[26],prow24[26],prow25[26]),
+  ncol = 2,
+  byrow = FALSE
+  )
+
+HR
+
+```
+
+Die erste Spalte beinhaltet die Wahrscheinlichkeit für die x-te Stelle (20., 21 etc.), die zweite Spalte beinhaltet die Wahrscheinlichkeit dass der Hang insgesamt nicht stabilisiert werden kann.
+
+
+## Verbesserungspotenzial
+
+- Das eigene Beispiel ist nicht besonders toll
+- Eigenes Beispiel könnte evtl schneller und mit weniger Code berechnet werden
+- In einem normalen Dokument wäre es übersichtlicher als in einer Präsentation
+
+
+
+
+
+
