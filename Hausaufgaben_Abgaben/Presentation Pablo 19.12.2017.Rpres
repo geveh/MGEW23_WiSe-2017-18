@@ -1,0 +1,52 @@
+Mountain Rescue Considerations
+========================================================
+author: Pablo Kaiser
+date: 19.12.2017
+autosize: true
+
+The Problem
+========================================================
+
+A group of walkers were lost on their walk between two mountain huts, maybe an earthquake and the accompanied landslides are responsible. They had to pass 20 mountainslopes on their way. All of the mountain slopes collapsed and the the chance to find the group is 90 %. Due to communication problems as a result of the earthquake there is also a chance of 10% that the group never left the last hut. How high is the chance to find them within the mountainslopes if the mountain rescue check 10 of the slopes without success?
+
+
+The calculation
+========================================================
+
+```{r}
+#set number of possible slopes 
+
+mountainslopes = 20
+
+#chance that the walkers stayed at the mountainhut without communication
+mountainhut = 0.1  
+
+#Prior distribution
+Prior = c(rep(0.9/mountainslopes,20),mountainhut)
+
+# examine 10 slopes
+i <- 10
+while (i < mountainslopes) {
+  Prior[i] <- 0
+  # Renormalise 
+  Prior <- Prior / sum(Prior)
+  
+  
+  i <- i + 1
+}
+SlopesHut = c(1:21)
+
+table(Prior)
+
+ChancetoFind = 0.082*10
+
+print(ChancetoFind)
+```
+
+Visualization
+========================================================
+
+```{r, echo=FALSE}
+plot(SlopesHut,Prior,type ="h",ylim = c(0, 1.5 * max(Prior)))
+
+```
