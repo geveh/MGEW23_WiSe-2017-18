@@ -1,0 +1,106 @@
+---
+title: "Quiz: Beta-Verteilung"
+author: "Agnieszka Kuras, Marie Bonitz"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    source_code: embed
+    
+---
+
+
+
+
+```{r setup, include=FALSE}
+
+
+library(flexdashboard)
+library(ggplot2)
+
+library(plyr)
+
+
+
+
+```
+
+
+
+-----------------------------------------------------------------------
+
+1. Frage
+=======================================================================
+
+### Wie funktioniert die Dichtefunktion der Betaverteilung?
+
+```{r}
+
+val <- seq(0, 1, 0.01)
+
+for(a in 1:4) {
+  for(b in 1:4) {
+    plot(val, dbeta(val, a, b), cex.lab = 1.5,
+                    type = "l", lwd= 2 , col="cornflowerblue",
+                    main = paste("a =", a, ", b=", b))  
+    }
+}
+
+```
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(datasets)
+data(faithful)
+```
+Column 
+-----------------------------------------------------------------------
+2. Frage
+=======================================================================
+
+### Wie lautet die Formel der Dichtefunktion?
+
+$$f(x):=\frac{1} {B(p,q)}*x^{p-1}*(1-x)^{q-1}$$
+
+mit $$B(p,q):=\int_0^1 [x^{p-1}*(1-x)^{q-1}]\,dx$$
+
+
+
+Column 
+-----------------------------------------------------------------------
+
+3. Frage
+=======================================================================
+
+### Beziehung zu anderen Verteilungen {data-height=650}
+
+Row 
+-----------------------------------------------------------------------
+
+### $Y=\frac{mX/n}{1+mX/n}$
+
+```{r}
+
+valueBox("F-Verteilung", icon = "fa-hand-o-up")
+
+```
+
+
+### $Beta(p1,p2)=\frac{\gamma(p1,b)} {\gamma(p1,b)+\gamma(p2,b)}$
+
+```{r}
+
+valueBox("Gammaverteilung", icon = "fa-hand-peace-o")
+
+```
+
+### stetige Verteilung 
+ 
+
+```{r}
+
+valueBox("Mischverteilungen", icon = "fa-hand-spock-o")
+
+```
+
+
+
