@@ -1,0 +1,58 @@
+---
+title: "Quiz on Beta-Distributions"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Please mind the "Start Over" button on the left hand side in case you've messed up the quiz.
+
+```{r Beta-Distribution}
+quiz(
+  question("What do the shape parameters a and b of a beta-distribution depend on according to the lecture?",
+    answer("mean", correct = TRUE),
+    answer("mode"),
+    answer("median", correct = TRUE),
+    answer("range"),
+    allow_retry = TRUE,
+    correct = "Yup.",
+    incorrect = "Nope. How can you not know this..."
+  ),
+  question("What the heck do we need the beta-distribution for?",
+    answer("To impress the lecturer.", correct = TRUE),       
+    answer("To express a prior probability
+distribution of a parameter only."),
+    answer("To express both prior and
+posterior probability distributions.", correct = TRUE),
+    answer("To express the posterior probability
+distribution of a parameter only."),
+    allow_retry = TRUE,
+correct = "Definitely.",
+incorrect = "I find your lack of knowledge disturbing."
+  ),
+question("What interval is the beta-distribution defined on?",
+    answer("[0,∞]"),
+    answer("[-∞,∞]"),
+    answer("[0,1]", correct = TRUE),
+    answer("It is not defined on a specific interval."),
+    allow_retry = TRUE,
+    correct = "Yessss.",
+    incorrect = "Close, but... no."
+  ),
+question("When a=1 and b=1, the beta-distribution...",
+    answer("...becomes a Gaussian distribution."),
+    answer("...becomes a uniform distribution.", correct = TRUE),
+    answer("...becomes a discrete probability distribution."),
+    answer("42", correct = TRUE),
+    allow_retry = TRUE,
+    correct = "Correct ;)",
+    incorrect = "Exmatrikulation beantragt."
+  )
+)
+```
+
+by Bastian Steinke and Luisa Hoße
+
