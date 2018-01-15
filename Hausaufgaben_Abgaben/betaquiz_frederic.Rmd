@@ -1,0 +1,103 @@
+---
+title: "The Beta distribution Quiz Frederic Brieger"
+output: 
+  flexdashboard::flex_dashboard:
+    storyboard: true
+    social: menu
+
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+### Question 1: Why should we use the beta distribution and to what distribution is it related?
+
+```{r}
+val <- seq(0, 1, 0.01) # Spacing
+par(mfrow = c(1,1))
+plot(val, dbeta(val, 3, 3), cex.lab = 1.5, type = "l", lwd = 2, main = "a, b between 1 and 3", ylab = "dbeta")
+for (a in 1:3){
+  for (b in 1:3){
+  lines(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2, col = rgb(runif(1),runif(1),runif(1),1))}}
+
+```
+
+***
+
+The Beta distribution is a discrete distribution that looks similar to the binomial distribution. When applied to the interval [0, 1] it can be used to describe a prior or posterior probability distribution. For that, we can manipulate the values a and b or work just from a most probable value.
+
+In this plot you can see how the pdf is affected by different a and b values (between 1 and 3).
+
+
+### Question 2: What could we use the beta distribution for in the field of natural hazards?
+
+```{r}
+
+# Using the MODE of our prior  distribution
+gesamt <- 36
+w <- 0.7
+a <- w*(gesamt - 2) + 1
+b <- (1-w) * (gesamt - 2) + 1
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2, col = "firebrick1")
+print(c(a,b))
+```
+
+*** 
+
+The beta distribution is the perfect choice if we are looking for a prior distribution with a distinct maximum.
+For example: An old paper suggests that most wildfires out of 36 events reduce the vegetation by 70 %, but the data this value is based on is missing.
+Given this MODE we can plot a prior probability distribution using the beta distribution.
+
+### Question 3: How can we use the mean or mode to calculate a beta distribution?
+
+
+```{r, echo = FALSE}
+val <- seq(0, 1, 0.01) # Spacing
+par(mfrow=c(2,1)) # Plotlayout
+
+# Using the MEAN of our prior  distribution
+gesamt <- 10
+m <- 0.5
+a <- m * (gesamt)
+b <-  (a/m)-a
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2, col = "gold1", ylab = "dbeta")
+print(paste("a1 =", a, ", b1 =", b))
+
+# Using the MODE of our prior  distribution
+gesamt <- 100
+w <- 0.8
+a <- w*(gesamt - 2) + 1
+b <- (1-w) * (gesamt - 2) + 1
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2, col = "dodgerblue2", ylab = "dbeta")
+print(paste("a2 =", a, ", b2 =", b))
+
+
+```
+***
+```{r, echo = TRUE, eval = FALSE}
+val <- seq(0, 1, 0.01) # Spacing
+par(mfrow=c(2,1)) # Plotlayout
+
+# Using the MEAN of our prior  distribution
+gesamt <- 10
+m <- 0.5
+a <- m * (gesamt)
+b <-  (a/m)-a
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2)
+print(c(a,b))
+
+# Using the MODE of our prior  distribution
+gesamt <- 100
+w <- 0.8
+a <- w*(gesamt - 2) + 1
+b <- (1-w) * (gesamt - 2) + 1
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2)
+print(c(a,b))
+
+```
