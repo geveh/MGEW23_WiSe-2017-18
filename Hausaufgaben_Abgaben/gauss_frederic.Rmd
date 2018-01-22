@@ -1,0 +1,81 @@
+---
+title: "Gauss homework Frederic"
+author: "Frederic Brieger"
+date: "22 Januar 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = TRUE}
+
+```
+## Where does the Gaussian distribution come from?
+
+The gaussian or normal distribution is a continuous probability distribution and has a symmetrical shape. Both sides of the symmetry axis resemble a simple exponential function.
+
+```{r, echo = TRUE}
+x <- seq(1, 10, 0.1)
+y <- exp(-x)
+
+plot(x,y, type = "l", lwd = 2, col = "firebrick1", main = "Basic exponential function", ylab = "exp(-x)")
+grid()
+
+```
+
+
+## How does the normal distribution look like?
+
+The distribution can be described with two parameters: the mean, mode and median of the distribution is mu and the standart deviation is sigma.
+$f(x| mu, sigma^2) = 1/(sqrt(2*pi*sigma^2) * exp(-((x-mu)^2 / (2*sigma^2))$
+
+```{r, echo = TRUE}
+x2 <- seq(-5, 5, 0.1)
+plot(x2, dnorm(x2, 0, 1), type = "l", lwd = 2, col = "firebrick1", main = "Mu = 0, sigma = 1", ylab = "p(x), cumm. p(x)", ylim = c(0, 1)) # Plotting the desnsity function
+grid()
+lines(x2, pnorm(x2, 0, 1), type = "l", lwd = 2, col = "deepskyblue1") # Adding the distribution function
+legend(-4.5, 1, legend = c("Density function", "Distribution function"), col = c("firebrick1", "deepskyblue1"), lty = 1)
+```
+
+To see how sigma and mu change the shape of the density- and its distribution function I created a 3x3 plot with variing values.
+
+```{r, echo = TRUE}
+x3 <- seq(-10, 10, 0.1)
+mus <- c(1,2,3) # Different mus
+sigmas <- c(1,2,3) # Different sigmas
+
+par(mfrow=c(3,3)) # 3x3 plot matrix
+for (i in 1:3){
+  for (t in 1:3){
+    plot(x3, dnorm(x3, mean = mus[i], sd = sigmas[t]), type = "l", 
+         lwd = 2, col = "turquoise3", ylab = "p(x)", xlim = c(-10, 10), 
+         ylim = c(0, 0.4), main = paste("mu =", i, ", sd =", t))
+    grid()
+  }
+}
+```
+
+We can see that mu does not change the form of the function but moves it along the x-axis. The standard deviation sigma changes the form of the bell.
+As it is a probability distribution function, the area under the graph always remains 1. 
+
+## Typical applications of the normal distribution
+
+The importance of the Gaussian distribution comes from the fact that many natural processes follow this distribution such as errors from measurements, grades from an exam or molecule motion.
+
+## Usage in the field of natural hazards or data analysis
+
+As we learned, many natural processes follow the normal distribution and so can data which is derived from these processes. 
+In this example a dataset containing five normally distributed values needs to be testet if it is originated from a datastation with a given standart deviation and long term mean value.
+
+```{r, echo = TRUE}
+sigma <- 5
+data <- rnorm(5, runif(1, 50, 70), sigma) # Generates a normally distributed dataset containing 5 numbers
+testmu <- runif(1, 50, 70) # A mu for wich I want to test the data
+likelihood <- prod(dnorm(data, testmu, sigma)) # Likelihood p(testmu|data)
+
+print(data)
+print(paste("testmu=", testmu))
+print(paste("Likelihood", likelihood))
+```
