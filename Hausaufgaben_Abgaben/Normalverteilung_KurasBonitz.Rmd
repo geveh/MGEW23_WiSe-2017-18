@@ -1,0 +1,88 @@
+---
+title: "Normalverteilung"
+author: "Kuras, Bonitz"
+date: "20 Januar 2018"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(plotly)
+```
+## Bedeutung
+
+ Eine symmetrische Verteilungsform, bei der *Median* und *Mittelwert* identisch sind. Mit der Normalverteilung wird ein zufälliger Vorgang beschrieben, der durch viele voneinander unabhängige Faktoren beeinflusst werden kann. In Naturwissenschaften können Vorhersagen normalverteilt sein, falls über die Verteilung der Grundgesamtheit nichts bekannt ist.
+ 
+ 
+
+## Die Dichtefunktion der Normalverteilung
+
+$$f_{µ,\sigma}(x)=\frac{1}{\sqrt{2µ\sigma}}*exp(-\frac{(x-µ)^2}{2\sigma^2})$$
+
+Die *Normalverteilung* wird charakterisiert durch zwei Parameter: Erwartungswert $$µ$$ und Varianz $$\sigma^2$$
+
+Die Dichte einer Normalverteilung hat ein Maximum an der Stelle *µ*
+
+### Grafische Darstellung der Dichte der Standardnormalverteilung als gaußsche Glockenkurve
+ 
+```{r Code}
+
+x <- seq(-10,10, by=0.010)
+plot(x, dnorm(x),
+     type="l", xlab="x", ylab="f(x)", main="Dichte der Standardnormalverteilung")
+
+```
+
+
+
+### Die Verteilungsfunktion $$\Phi$$
+
+Häufig Gaußsche Summenfunktion genannt
+
+```{r Code2}
+x <- seq(-10,10, by=0.02) 
+plot(x, pnorm(x),
+     type="l", xlab="x", ylab="Phi(x)", main="Verteilungsfunktion Phi der Standardnormalverteilung")
+```
+
+### Quantilfunktion $$z$$
+
+```{r Code3}
+x<- seq(0,1, by=0.005) 
+plot(x,qnorm(x),
+     type="l", xlab="x", ylab="z(x)", main="Quantilsfunktion z der Standardnormalverteilung")
+```
+
+## Beispiel 
+
+Laut der sorgfältigen Datenanalyse von Vulkanausbrüchen in den letzten 10 Jahren beträgt die maximale Anzahl der Ausbrüchen 105 und die minimale Anzahl 55.
+
+
+der Mittelwert $$µ=80$$ beträgt 80, Varianz $$\sigma^2=15$$
+
+
+```{r Code4}
+#sigma <- sqrt(n*p*(1-p))
+#mu <- n*p
+sigma.squared <- 15
+sigma <- sqrt(sigma.squared)
+mu <- 80
+x <- seq(55,105, by=0.001)
+ 
+von <- 55
+bis <- 105
+ 
+const <- 1/sqrt(2*pi*sigma^2)
+integral <- function(x) {const * exp(-(((x-mu)^2)/(2*sigma^2)))}
+ 
+Ergebnis <- integrate(integral, von, bis)
+Ergebnis
+
+plot(x, (1/sqrt(2*pi*sigma^2))*(exp(-(((x-mu)^2)/(2*sigma^2)))), type="l", xlab="Verteilung", ylab="Dichtefunktion")
+abline(v = 80, lty = 2, col = 'red')
+
+
+```
+
