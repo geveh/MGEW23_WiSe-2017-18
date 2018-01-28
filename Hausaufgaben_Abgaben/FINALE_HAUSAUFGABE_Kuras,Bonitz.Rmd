@@ -1,0 +1,538 @@
+---
+author: "Bonitz, Kuras"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+    smooth_scroll: true
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+
+
+library(flexdashboard)
+library(ggplot2)
+library(datasets)
+library(dygraphs)
+library(plyr)
+
+
+
+
+```
+
+
+
+Bayes Rule
+===============================================================
+
+Column
+-----------------------------------------------------------------
+
+### The Bayes Theorem
+
+The Bayes Theorem explains the probability of the occurence of an event A under the assumption of the occurence of an event B. Therefore it is possible to determine the **conditional and joint possibilities**. Written as a function: 
+
+$$Posterior= \frac{(Likelihood*Prior)} {Evidence}$$
+
+----------------------------------------------------------------
+**Earthquake prediction in Istanbul**
+
+**Question:**
+
+Researchers predict, that a strong earthquake will occur in Istanbul in the next years, with a probability of 66%. Though it became apparent that only 30% of the made predictions for earthquakes were right. What is the probability that the prognosis of the researchers fulfills? What happens with the probability if we don't know how often the predicitons had come true?
+
+
+**Application of the Bayes Rule:**
+
+*Prior P(B)*        - strong earthquake will occur in Istanbul in the next years  
+*Evidence P(A)*     - the researchers are right with their prediction  
+*Likelihood P(A|B)* - the researchers made a right prediction about earthquakes  
+*Posterior P(B|A)*  - the predicition fulfills  
+
+The posterior can be calculated with:
+
+$$P(B|A)=\frac{P(A|B)*P(B)} {P(A|B)*P(B)+P(A|b)*P(b)}$$
+
+
+
+```{r tabsets, echo=FALSE}
+shinyApp(
+ ui = fillPage(
+   fillCol(flex = c(NA, 1),
+  titlePanel("Change prior and likelihood to see how it effects posterior!"),
+    sidebarPanel(
+    sliderInput(
+      inputId = "Like", 
+      label = "Likelihood", 
+      min = 0, 
+      max = 1, 
+      value = 0.3
+      ),
+    
+    sliderInput(
+      inputId = "Prior", 
+      label = "Prior", 
+      min = 0, 
+      max = 1, 
+      value = 0.66
+      )
+  ),
+  mainPanel(tabsetPanel(
+    tabPanel(
+      title = "The probability for the prediction to come true is",
+      textOutput(outputId = "answerTextOutput")
+    )
+  ))
+)),
+server <- function(input, output) {
+  output$answerTextOutput <- renderText({
+    #calc
+    AB <- input$Like
+    B <- input$Prior
+      BA <- (AB*B)/((AB*B)+((1-AB)*(1-B)))
+  })
+}
+
+)
+```
+
+With this shinyapp we can change the likelihood and posterior values and can thus answer the two questions above. If we have no informations about the likelihood it has a probability of 50%. Therefore we see that the posterior is like the prior, because we have no new information to put in the formula.
+
+
+
+
+
+Bernoulli Verteilung
+==========================================================
+
+Column {data-height=200}
+----------------------------------------------------------
+
+### Bernoulli Verteilung mit Binominal-Koeffizien
+
+-----------------------------------------------------------
+
+$$Likelihood=\frac{n!}{k!(n-k)!}*Prior^k*(1-Prior)^{n-k}$$
+
+Row {data-height=650}
+-----------------------------------------------------------
+
+### Plots
+ 
+```{r graph Darstellung}
+#Data: eine wahre Aussage, zehn falsche
+True <- 1
+False <- 10
+
+#Darstellung mehrer Plots auf einer Seite: prior, likelihood und posterior
+par(mfrow = c(3,1))
+
+#set prior(Gleichverteilung -> ergibt 1) and theta
+Prior <- c(0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.05)
+Theta <- c(1,2,3,4,5,6,7,8,9,10,11)
+
+
+#create data frame for x,y
+Prior_graph <- data.frame(Theta,Prior)
+#plot of prior
+plot((Prior_graph),
+     type = "h",
+     main="Prior",
+     xlim=c(1, 11), ylim=c(0, 0.1)
+     )
+
+#Bernoulli-Verteilung mit Binominal-Koeffizient
+Likelihood <- c(((factorial(True+False))/(factorial(True)*factorial(False)))*Prior^True*(1-Prior)^False)
+Likelihood_graph <-data.frame(Theta,Likelihood)
+plot ((Likelihood_graph),
+      type = "h",
+      main="Likelihood",
+      xlim=c(1, 11)
+      )
+
+#Bayes´ Rule
+Posterior <- c((Likelihood*Prior)/((Likelihood*Prior)+((1-Likelihood)*(1-Prior))))
+Posterior_graph <-data.frame(Theta,Posterior)
+plot((Posterior_graph),
+     type = "h",
+     main="Posterior",
+     xlim=c(1, 11) 
+     )
+
+```
+
+
+
+Bernoulli Applikation
+==========================================================
+Column{.sidebar}
+----------------------------------------------------------
+
+### Interaktive Darstellung der Bernoulli Verteilung
+
+```{r tabsets2, echo=FALSE}
+
+      numericInput(inputId = "success","Success",
+               value = 1,
+               min = 1)
+      numericInput(inputId = "failure","Failure",
+               value = 1,
+               min = 1)
+      numericInput(inputId = "numprior", "Number of Priors",
+                   value = 10,
+                   min = 1)
+```
+
+Column {data-height=650}
+----------------------------------------------------------
+
+```{r tabsets3, echo=FALSE}
+# Anzahl des Prior Inputs ausgeben
+  theta <- reactive({
+    numprior <- input$numprior
+    theta <- seq(0,1,1/(numprior+1))
+    theta <- theta[2:(length(theta)-1)]
+    })
+#Prior Verteilung
+  prior <- reactive({
+      prior <- pmin(theta(), 1-theta())
+      prior <- prior/sum(prior)
+    })
+  
+#berechnung der likelihood
+  likelihood <- reactive(choose((input$success+input$failure),input$success)*(theta()^input$success*(1-theta())^input$failure))
+ 
+#berechnung des posterior
+  posterior <- reactive((likelihood()*prior())/((likelihood()*prior())+((1-likelihood())*(1-prior())))) 
+ 
+  
+  renderPlot({
+    layout(matrix(c(1, 2, 3), nrow = 3, ncol = 1, byrow = FALSE))
+    par(mai = c(0.5, 0.5, 0.5, 0.1))
+    
+    plot(theta(),prior(),
+         type = "h",
+         main = "Prior",
+         xlab = "Theta",
+         ylab = "Prior",
+         xlim = c(0,1))
+    plot(theta(),likelihood(),
+         type = "h",
+         main = "Likelihood",
+         xlab = "Theta",
+         ylab = "Likelihood",
+         xlim = c(0,1))
+    plot(theta(),posterior(),
+         type = "h",
+         main = "Posterior",
+         xlab = "Theta",
+         ylab = "Posterior",
+         xlim = c(0,1))
+    
+
+})
+
+```
+
+
+
+Bayes & Bernoulli
+========================================================
+
+Row {data-width=2400}
+--------------------------------------------------------
+
+### Statement
+
+Wir verfügen über Erdbebenmessungen aus den letzten 200 Jahren. Laut der Statistikanalyse lässt sich schlussfolgern, dass ein einziges Erdbeben von Magnitude über 8 in jedem Jahrzenzten mit der Wahrcheinlichkeit von 95% auftritt. Wir sind gerade am Ende des 9. Jahres eines Jahrzehnten. In den letzten 9 Jahren gab es kein Erdbeben mit der Magnitude über 8.
+
+
+Wie hoch ist die Wahrscheinlichkeit, dass ein Erdbeben-Event in dem letzten Jahr stattfindet?
+
+Column 
+------------------------------------------------------
+
+### Beispiel
+
+
+
+
+Die Wahrscheinlichkeit für das Auftreten des Erdbebens is in jedem Jahr gleich hoch. Es gibt 10 mögliche Jahre in denen das Ereignis auftreten kann und die 11. Möglichkeit, dass das Erdbeben nicht auftritt. Mit den gegebenen Information ist vor Ablauf der ersten neun Jahre, die Wahrscheinlichkeit, das kein Erdbeben mit der Magnitude 8 auftritt 5%. Nach neun Jahren erhöht sich die Wahrscheinlichkeit für ein Auftreten im 10. Jahr und für ein Nicht-Auftreten proportional zu ihrer Anfangswahrscheinlichkeit. Wie in diesem Graf zu sehen beträgt die Wahrscheinlichkeit für das Erdbeben im 10 Jahr ~66% und für kein Erdbeben ~34%.\ref{theta_graph}
+
+Row {.tabset .tabset-fade}
+------------------------------------------------------------
+
+### Prior
+
+```{r graphische Darstellung}
+#Data: eine wahre Aussage, zehn falsche
+True <- 1
+False <- 10
+
+
+#von dem zweiten Wert von Theta wird 0 angesetzt -> da Misserfolge, die Wahrscheinlichkeiten von den 9 Werten werden jeweils auf den letzten Wert verteilt  (letztes Jahr)
+noearthquake <- 0.05
+Prior <- c(0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,0.095,noearthquake)
+Theta <- c(1,2,3,4,5,6,7,8,9,10,11)
+# loop i sind die Anzahl an prior, es wird jeder prior von 3-11 nacheinander auf Null gesetzt und auf den Rest(Summe des neuen prior) ausummiert. 
+for (i in 1:9) {Prior[i] <- 0
+Prior <- Prior/sum(Prior)
+
+}
+#create data frame for x,y
+Theta_graph <- data.frame(Theta,Prior)
+#plot of prior
+plot((Theta_graph),
+     type = "h",
+     main="Prior",
+     xlim=c(1, 11), ylim=c(0, 1)
+    
+     )
+
+```
+
+
+
+
+### Likelihood nach Bernoulli-Verteilung
+
+```{r graph2 Darstellung}
+#Bernoulli-Verteilung mit Binominal-Koeffizient
+Likelihood <- c(((factorial(True+False))/(factorial(True)*factorial(False)))*Prior^True*(1-Prior)^False)
+Likelihood_graph <-data.frame(Theta,Likelihood)
+plot ((Likelihood_graph),
+      type = "h",
+      main="Likelihood",
+      xlim=c(1, 11),ylim=c(0,0.06)
+    
+      )
+
+
+```
+
+
+
+### Posterior nach Bayes Rule
+
+```{r graph3 Darstellung}
+Posterior <- c((Likelihood*Prior)/((Likelihood*Prior)+((1-Likelihood)*(1-Prior))))
+Posterior_graph <-data.frame(Theta,Posterior)
+plot((Posterior_graph),
+     type = "h",
+     main="Posterior",
+     xlim=c(1, 11),ylim=c(0,0.04)
+     )
+
+
+
+```
+
+
+
+### Alle Plots
+
+```{r plots}
+par(mfrow = c(3,1))
+
+Theta_graph <- data.frame(Theta,Prior)
+#plot of prior
+plot((Theta_graph),
+     type = "h",
+     main="Prior",
+     xlim=c(1, 11),ylim=c(0, 1)
+)
+
+Likelihood_graph <-data.frame(Theta,Likelihood)
+plot ((Likelihood_graph),
+      type = "h",
+      main="Likelihood",
+      xlim=c(1, 11),ylim=c(0,0.06)
+)
+
+Posterior_graph <-data.frame(Theta,Posterior)
+plot((Posterior_graph),
+     type = "h",
+     main="Posterior",
+     xlim=c(1, 11),ylim=c(0,0.04)
+)
+```
+
+Quiz Betaverteilung
+========================================================================
+
+Column 
+-----------------------------------------------------------------------
+
+### Quiz zur Betaverteilung
+**Quizfragen**
+
+Row {.tabset .tabset-fade scroll data-height=3000}
+------------------------------------------------------------
+
+### 1. Frage
+
+**Wie funktioniert die Dichtefunktion der Betaverteilung?**
+
+```{r}
+
+val <- seq(0, 1, 0.01)
+
+for(a in 1:4) {
+  for(b in 1:4) {
+    plot(val, dbeta(val, a, b), cex.lab = 1.5,
+                    type = "l", lwd= 2 , col="cornflowerblue",
+                    main = paste("a =", a, ", b=", b))  
+    }
+}
+
+```
+
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(datasets)
+data(faithful)
+```
+
+Row
+-------------------------------------------------
+
+### 2. Frage
+
+**Wie lautet die Formel der Dichtefunktion?**
+
+$$f(x):=\frac{1} {B(p,q)}*x^{p-1}*(1-x)^{q-1}$$
+
+mit $$B(p,q):=\int_0^1 [x^{p-1}*(1-x)^{q-1}]\,dx$$
+
+
+Column
+----------------------------------------------------------
+
+### 3. Frage
+
+**Beziehung zu anderen Verteilungen**
+
+### $Y=\frac{mX/n}{1+mX/n}$
+
+```{r}
+
+valueBox("F-Verteilung", icon = "fa-hand-o-up")
+
+```
+
+### $Beta(p1,p2)=\frac{\gamma(p1,b)} {\gamma(p1,b)+\gamma(p2,b)}$
+
+```{r}
+
+valueBox("Gammaverteilung", icon = "fa-hand-peace-o")
+
+```
+
+### stetige Verteilung 
+ 
+
+```{r}
+
+valueBox("Mischverteilungen", icon = "fa-hand-spock-o")
+
+```
+
+Normalverteilung
+========================================================
+
+Row {data-width=2400}
+--------------------------------------------------------
+
+### Bedeutung
+
+
+```{r setup3, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(plotly)
+```
+
+
+ Eine symmetrische Verteilungsform, bei der *Median* und *Mittelwert* identisch sind. Mit der Normalverteilung wird ein zufälliger Vorgang beschrieben, der durch viele voneinander unabhängige Faktoren beeinflusst werden kann. In Naturwissenschaften können Vorhersagen normalverteilt sein, falls über die Verteilung der Grundgesamtheit nichts bekannt ist.
+ 
+
+Column
+--------------------------------------------------------
+
+### Die Dichtefunktion der Normalverteilung
+
+$$f_{µ,\sigma}(x)=\frac{1}{\sqrt{2\pi}\sigma}*exp(-\frac{(x-µ)^2}{2\sigma})$$
+
+Die *Normalverteilung* wird charakterisiert durch zwei Parameter: Erwartungswert $$µ$$ und Varianz $$\sigma^2$$
+
+Die Dichte einer Normalverteilung hat ein Maximum an der Stelle *µ*
+
+Row {.tabset .tabset-fade}
+--------------------------------------------------------
+
+### Grafische Darstellung der Dichte der Standardnormalverteilung als gaußsche Glockenkurve
+ 
+```{r Code, echo=FALSE}
+
+x <- seq(-10,10, by=0.010)
+plot(x, dnorm(x),
+     type="l", xlab="x", ylab="f(x)", main="Dichte der Standardnormalverteilung")
+
+```
+
+
+### Die Verteilungsfunktion $$\Phi$$
+
+Häufig Gaußsche Summenfunktion genannt
+
+```{r Code2, echo=FALSE}
+x <- seq(-10,10, by=0.02) 
+plot(x, pnorm(x),
+     type="l", xlab="x", ylab="Phi(x)", main="Verteilungsfunktion Phi der Standardnormalverteilung")
+```
+
+### Quantilfunktion $$z$$
+
+```{r Code3, echo=FALSE}
+x<- seq(0,1, by=0.005) 
+plot(x,qnorm(x),
+     type="l", xlab="x", ylab="z(x)", main="Quantilsfunktion z der Standardnormalverteilung")
+```
+
+Column
+--------------------------------------------------------
+
+### Beispiel 
+
+Laut der sorgfältigen Datenanalyse von Vulkanausbrüchen in den letzten 10 Jahren beträgt die maximale Anzahl der Ausbrüchen 105 und die minimale Anzahl 55.
+
+
+der Mittelwert $$µ=80$$ beträgt 80, Varianz $$\sigma^2=15$$
+
+--------------------------------------------------------
+
+### Diagramm
+```{r Code4, echo=FALSE}
+#sigma <- sqrt(n*p*(1-p))
+#mu <- n*p
+sigma.squared <- 15
+sigma <- sqrt(sigma.squared)
+mu <- 80
+x <- seq(55,105, by=0.001)
+ 
+von <- 55
+bis <- 105
+ 
+const <- 1/sqrt(2*pi*sigma^2)
+integral <- function(x) {const * exp(-(((x-mu)^2)/(2*sigma^2)))}
+ 
+Ergebnis <- integrate(integral, von, bis)
+Ergebnis
+
+plot(x, (1/sqrt(2*pi*sigma^2))*(exp(-(((x-mu)^2)/(2*sigma^2)))), type="l", xlab="Verteilung", ylab="Dichtefunktion")
+abline(v = 80, lty = 2, col = 'red')
+
+
+```
