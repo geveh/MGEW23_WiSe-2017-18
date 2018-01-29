@@ -1,0 +1,370 @@
+---
+title: "Collected Work - MGEW23 - The Basics of Quantifying Natural Hazards"
+author: "Pablo Kaiser"
+date: "27 Januar 2018"
+output: html_document
+runtime: shiny
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+####**Bayes' Theorem**
+$$P(A|B)*P(B)=P(B|A)*P(A)$$
+$$P(A|B)=\frac{P(B|A)*P(A)}{P(B)}$$
+ 
+**P(A | B) ist die (bedingte) Wahrscheinlichkeit des Ereignisses A unter der Bedingung, dass B eingetreten ist**  
+  
+  
+**P(B | A) ist die (bedingte) Wahrscheinlichkeit des Ereignisses B unter der Bedingung, dass A eingetreten ist**  
+
+  **P(A) ist die Wahrscheinlichkeit (Anfangswahrscheinlichkeit) für das Eintreten des Ereignisses A**  
+  
+  **P(B) ist die Wahrscheinlichkeit (Anfangswahrscheinlichkeit) für das Eintreten des Ereignisses B**  
+  
+  
+####**Erläuterung**  
+  
+    
+*Der Satz von Bayes erlaubt das Umkehren und anschließende kalkulieren von bedingten Wahrscheinlichkeiten. Anfangswahrscheinlichkeitseinschätzungen werden durch Lerneffekte angepasst und somit auch die Ergebniswahrscheinlichkeit. Also ist das Lernen aus Erfahrung ein zentraler Anwendungsbereich.*  
+
+
+Als Beispiel ist die Risikobewertung durch gravitative Gefahren zu nennen. Bei der mit Hilfe der Bayes'Entscheidungstheorie dynamische Aussagen über das Gefahrenpotenzial getroffen werden können.
+
+####**Bayes' Theorem**  
+
+$$P(A|B)=\frac{P(B|A)*P(A)}{P(B)}$$
+ 
+**P(A | B)(Posterior) ist die (bedingte) Wahrscheinlichkeit des Ereignisses A unter der Bedingung, dass B eingetreten ist**  
+  
+  
+**P(B | A)(Likelihood) ist die (bedingte) Wahrscheinlichkeit des Ereignisses B unter der Bedingung, dass A eingetreten ist**  
+
+  **P(A)(Prior) ist die Wahrscheinlichkeit (Anfangswahrscheinlichkeit) für das Eintreten des Ereignisses A**  
+  
+  **P(B)(Evidence) ist die Wahrscheinlichkeit (Anfangswahrscheinlichkeit) für das Eintreten des Ereignisses B**  
+  
+
+```{r eruptions, echo=FALSE}
+library(shiny)
+
+
+ui <- fluidPage(
+  titlePanel(h4("Bayes Interaktiv")
+  ),
+  sidebarLayout(
+    sidebarPanel(
+      helpText(strong("Bayes Rechenhilfe")),
+                numericInput(inputId = "like",
+                            label = "Likelihood P(B|A)",
+                            value = 0.5, min = 0, max = 1, step = 0.01),
+                numericInput(inputId = "Prior",
+                             label = "Prior P(A)",
+                             value = 0.5, min = 0, max = 1, step = 0.01),
+                actionButton("calc","Berechnen")
+    ),
+  
+  mainPanel(textOutput("Ergebnis"),plotOutput("space")
+    )
+  )
+)
+  
+
+
+
+server<- function(input, output){
+  Button = eventReactive(input$calc, {(input$like*input$Prior)
+    })
+  output$Ergebnis = renderText({paste("Die Wahrscheinlichkeit für P(A|B) ist", Button())
+    })
+}
+shinyApp(ui = ui, server = server)
+```
+  
+
+
+
+###Homework 5.12.2017 - Dependencies of Prior,Likelihood & Posterior
+
+
+
+####**The following plots were made to visualise the dependencies between Prior, Likelihood , Posterior.**
+
+```{r}
+par(mfrow=c(1,3))#combining plots
+
+theta = seq(0.1,0.9,0.01)
+prior1 = dnorm(theta,0.5,0.1)
+prior = prior1/sum(prior1)
+
+plot(theta,prior, type = "h") 
+
+
+
+
+#prior2 <- beta(1,30)
+
+
+#Likelihood plot
+Theta = seq(0.1,0.9,0.01)
+#Data|Theta = seq(0.01,0.99,0.01)
+likelihood = function(n,k,Theta){return((factorial(n)/factorial(k)*factorial(n-k))*Theta^k*(1-Theta)^(n-k))} #Theta <- Probability; k <- observed value; <-n fixed value
+like <- likelihood(20,3,Theta)
+plot(Theta,like,type = "h")
+
+DataEvidence = (like*prior)/(1-like)*(1-prior)
+#Posterior plot
+Posterior1=like*prior/DataEvidence
+Posterior=Posterior1/sum(Posterior1)
+plot(theta,Posterior,type= "h")
+
+
+```
+
+####**Note, the more values the likelihood will provide, the less the prior values will influence the posterior.** 
+
+###Homework  12.12.2017 
+
+####**Shiny App Interactive Plots**
+
+```{r PriorPosterior, echo=FALSE}
+library(shiny)
+
+
+
+####
+
+##Prior
+
+theta = seq(0.1,0.9,0.01)
+prior1 = dnorm(theta,0.5,0.2)
+prior = prior1/sum(prior1)
+
+
+#Likelihood
+Theta = seq(0.1,0.9,0.01)
+
+
+likelihood = function(n,k,Theta){return(Theta^k*(1-Theta)^(n))} #Theta <- Probability of success; 
+
+
+#Posterior
+
+
+ui <- fluidPage(
+  titlePanel(h4("Interaktive Plots")
+  ),
+  
+  sidebarLayout(
+    sidebarPanel(("Number of"),
+  numericInput(inputId = "k",
+                            label = "Success",
+                            value = 1, min = 0, max = 1e6, step = 1),
+  numericInput(inputId = "n",
+                             label = "Failure",
+                             value = 1, min = 0, max = 1e6, step = 1)),
+  
+  fluidRow(
+    column(3,plotOutput("Plot1", width = "250px", height = "200px")),
+    column(3,plotOutput("Plot2", width = "250px", height = "200px")),
+    column(3,plotOutput("Plot3",width = "250px", height = "200px"))
+  )
+  )
+  )
+
+  
+  
+
+server<- function(input, output){
+  
+    Posterior <- reactive({
+    Posterior1 = (likelihood(input$n,input$k,Theta)*prior)/((likelihood(input$n,input$k,Theta)*prior)+(1-likelihood(input$n,input$k,Theta))*(1-prior))
+    Posterior1/sum(Posterior1)}) # calculate the posterior
+    
+#    evidence = (likelihood*prior)+(1-like)*(1-prior)
+#Posterior1=(likelihood*prior)/evidence
+#Posterior=Posterior1/sum(Posterior1)  siehe oben, aber übersichtlicher
+
+    
+#Prior Plot    
+  output$Plot1 = renderPlot(plot(theta,prior,lwd = 1.5, main = "Prior",
+                                                                
+    col = "chartreuse4",
+     type = "h",xlim = c(0, 1), xlab = bquote(theta),
+     ylim = c(0, 1.2 * max(prior)), ylab = bquote(p(theta)),
+     cex.axis = 1.2, cex.lab = 1.5, cex.main = 2))
+#Likelihood Plot  
+    output$Plot2 = renderPlot(plot(Theta,likelihood(input$n,input$k,Theta),type = "h",, lwd = 2, main = "Likelihood",
+    
+      cex.axis = 1.2,col = "chocolate1",  cex.lab = 1.5, cex.main = 2, xlim = c(0, 1), xlab = bquote(theta),
+      ylim = c(0, 1.1 * max(likelihood(input$n,input$k,Theta))), ylab = bquote(paste("p(D|", theta, ")")),))
+ 
+#Posterior Plot
+     output$Plot3 = renderPlot(plot(theta,Posterior(),type="h",, lwd = 2, main = "Posterior",
+                                    
+     cex.axis =           1.2,col = "goldenrod3",  cex.lab = 1.5,cex.main = 2,xlim = c(0, 1), xlab =              bquote(theta), ylim = c(0, 1.1 * max(Posterior())), ylab = bquote(paste("p(", theta, "|D)"))))
+ 
+    
+}
+
+
+
+
+shinyApp(ui = ui, server = server)
+```
+  
+
+####**The Prior ist normal distributed, next steps could be the implementation of other distributions(Poisson,Binom) to reveal the effects on the posterior.**
+
+###Homework 19.12.2017
+
+
+###**Mountain Rescue Considerations**
+
+####The Problem
+
+A group of walkers were lost on their walk between two mountain huts, maybe an earthquake and the accompanied landslides are responsible. They had to pass 20 mountainslopes on their way. All of the mountain slopes collapsed and the the chance to find the group is 90 %. Due to communication problems as a result of the earthquake there is also a chance of 10% that the group never left the last hut. How high is the chance to find them within the mountainslopes if the mountain rescue check 10 of the slopes without success?
+
+```{r}
+#set number of possible slopes 
+
+mountainslopes = 20
+
+#chance that the walkers stayed at the mountainhut without communication
+mountainhut = 0.1  
+
+#Prior distribution
+Prior = c(rep(0.9/mountainslopes,20),mountainhut)
+
+# examine 10 slopes
+i <- 10
+while (i < mountainslopes) {
+  Prior[i] <- 0
+  # Renormalise (make proper distribution)
+  Prior <- Prior / sum(Prior)
+  
+  
+  i <- i + 1
+}
+
+SlopesHut = c(1:21)
+plot(SlopesHut,Prior,type ="h",ylim = c(0, 1.5 * max(Prior)))
+
+table(Prior)
+
+ChancetoFind = 0.082*10
+
+print(ChancetoFind)
+```
+####**The last bar shows the chance to find them in the last hut**
+
+###Homework 23.01.2017
+
+####**Exponential Family**
+
+#### Introduction
+
+The exponential family is a series of probability distributions. These are all based on the $$ f(x) = e^x $$ function and are used in many different fields of application.
+
+#### Exponential distribution
+
+The most basic distribution is $$ e^{-x} $$
+
+
+```{r gauss, echo=FALSE}
+x <- seq(0,1,0.01)
+
+
+
+plot(x, exp(-x), type ="l", col = "red", lwd = "2")
+```
+
+#### The sum under the curve has to be 1 to be a probability distribution
+
+```{r}
+integrate(function(x) exp(-x), 0, Inf)
+
+```
+
+# Other exponential distributions 
+
+
+### Laplace distribution
+
+$$\lambda\cdot e^{-\lambda\cdot   x}$$
+```{r}
+x <- seq(0,1,0.01)
+
+lambda <- 0.5
+plot(x,lambda*exp(-(lambda*(x))),type = "l",col = "blue", lwd = "2")
+integrate(function(x)
+  lambda * exp(-lambda * (x)), 0, Inf)
+
+```
+$$\lambda\cdot e^{-\lambda\cdot(x-\mu)   }$$
+
+#### The additional parameter µ provides the possibility to use negative values and shift the curve along the x axis
+
+```{r}
+x <- seq(-10,10,0.01)
+mu <- 20
+lambda <- 0.5
+plot(x,lambda*exp(-(lambda*(x))),type = "l",col = "blue", lwd = "2")
+integrate(function(x)
+  lambda * exp(-lambda * (x - mu)), mu,Inf )
+```
+
+To ensure a result of 1 after integration, we need to integrate from *mu* to *Infinity*
+
+## symmetry and normalization
+
+$$\frac 1 2 \lambda e^{-|(\lambda(x-\mu)|} $$
+
+
+
+```{r}
+x <- seq(10,30,0.01)
+
+lambda <- 0.5
+mu <- 20
+plot(x,lambda*exp(-abs(lambda*(x-mu))),type = "l",col = "cornflowerblue", lwd = "2")
+integrate(function(x) exp(-x), 0, Inf)
+```
+
+
+$$\frac {1}{\sqrt{\pi}}  \lambda e^{-[(\lambda(x-\mu)]^2}  $$
+
+```{r}
+x <- seq(10,30,0.01)
+
+lambda <- 0.5
+mu <- 20
+plot(x,(1/sqrt(pi))*lambda*exp(-(lambda*(x-mu))^2),type = "l",col = "cornflowerblue", lwd = "2")
+integrate(function(x) exp(-x), 0, Inf)
+```
+
+In these cases the factor infront of e is the important part regarding the normalization.
+
+#### From here it is only a short way to the gaussian distribution
+
+
+## The Normal Distribution (Gaussian)
+
+$$f(x) = \frac{1}{\sqrt{2\pi\sigma}} e^{(-\frac{(x - \mu)^2}{(2\sigma^2)})}$$
+
+
+```{r}
+x <- seq(-10,10,0.01)
+
+
+plot(x,dnorm(x),type = "l",col = "cornflowerblue", lwd = "2")
+integrate(function(x) exp(-x), 0, Inf)
+```
+
+Many natural phenomena occur approximately normal distributed, like bodysizes and windspeeds.
+
+
+
