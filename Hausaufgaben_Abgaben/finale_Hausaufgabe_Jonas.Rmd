@@ -1,0 +1,1063 @@
+---
+title: "Finale Hausaufgabe"
+author: "Jonas Stock"
+date: "29 January 2018"
+output: 
+  html_document:
+    theme: united
+    highlight: pygments
+    toc: TRUE
+    toc_float: TRUE
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+<style>
+    body .main-container {
+        min-width: 1300px;
+    }
+</style>
+
+
+Bitte das Dokument im externen Browser anschauen, ansonsten funktionieren einige Features nicht.
+
+##Bayes Rule {.tabset}
+
+###Erklärung und Herleitung
+
+**Erklärung**
+
+Mit Hilfe des Gesetz von Bayes ist es möglich, von einer bedingten Wahrscheinlichkeit auf die Wahrscheinlichkeit für die umgekehrte Bedingung zu schließen. Im folgenden wird das Gesetz hergeleitet:
+
+```{r}
+library(data.tree)
+
+prob1 <- Node$new(" ")
+  nA <- prob1$AddChild("nA")
+    nB2 <- nA$AddChild("nB")
+    B2 <- nA$AddChild("B")
+  A <- prob1$AddChild("A")
+    nB1 <- A$AddChild("nB")
+    B1 <- A$AddChild("B")
+
+SetGraphStyle(prob1, rankdir = "TB")
+SetEdgeStyle(prob1$A,
+             label = "P(A)")
+SetEdgeStyle(prob1$A$B,
+             label = "P(B|A)")
+
+plot(prob1)
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(A&B) </font>
+
+
+Das oben stehende Baumdiagramm zeigt die Wahrscheinlichkeiten für zwei verschiedene Ereignisse A und B. Zunächst gibt es zwei Äste, ob Ereignis A stattfindet ("A"), oder nicht stattfindet ("nA"). Aus diesen zwei Knoten führen dann jeweils 2 weitere Äste ab für die Wahrscheinlichkeit, ob Ereignis B stattfindet ("B"), oder nicht stattfindet ("nB"). Die Wahrscheinlichkeiten der beschrifteten Äste definieren sich wie folgt:
+
+P(A): Die Wahrscheinlichkeit, dass Ereignis A auftritt
+
+P(B|A): Die Wahrscheinlichkeit, dass Ereignis B auftritt unter der Bedingung, dass Ereignis A aufgetreten ist
+
+P(A&B): Die Wahrscheinlichkeit, dass die Ereignisse A und B aufgetreten sind
+
+P(B|A) ist die bedingte Wahrscheinlichkeit. Viele Situationen erfordern in ihrer Analyse, die Bedingung umzudrehen. Ziel ist es, die Wahrscheinlichkeit von Ereignis A unter der Bedingung, dass Ereignis B aufgetreten ist, zu berechnen:
+
+
+```{r}
+library(data.tree)
+
+prob2 <- Node$new(" ")
+  nB <- prob2$AddChild("nB")
+    nA2 <- nB$AddChild("nA")
+    A2 <- nB$AddChild("A")
+  B <- prob2$AddChild("B")
+    nA1 <- B$AddChild("nA")
+    A1 <- B$AddChild("A")
+
+
+SetGraphStyle(prob2, rankdir = "TB")
+SetEdgeStyle(prob2$B,
+             label = "P(B)")
+SetEdgeStyle(prob2$B$A,
+             label = "P(A|B)")
+
+plot(prob2)
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(B&A) </font>
+
+Dieses Baumdiagramm ist ähnlich des ersten mit dem Unterschied, dass nun das Ereignis B im ersten Schritt steht, sodass wir nun die bedingte Wahrscheinlichkeit P(A|B) auf dem entsprechenden Ast auftragen können.
+
+Die Wahrscheinlichkeiten P(A&B) und P(B&A) lassen sich beide über die Multiplikation der entsprechenden Äste berechnen:
+
+
+$$P(A\&B) = P(A) \cdot P(B|A)$$
+
+
+
+$$P(B\&A) = P(B) \cdot P(A|B)$$
+
+
+
+
+
+Die Wahrscheinlichkeit von A und B ist logischerweise identisch mit der Wahrscheinlichkeit von B und A:
+
+
+
+
+$$P(A\&B) = P(B\&A)$$
+
+$$P(A) \cdot P(B|A) = P(B) \cdot P(A|B)$$
+
+Schlussendlich lässt sich nach der gesuchten bedingten Wahrscheinlichkeit P(A|B) umstellen:
+
+$$P(A|B) = \frac{P(A) \cdot P(B|A)}{P(B)}$$
+
+
+**Beispiel**
+
+In vielen Fällen kann das Verhalten der Tierwelt ein Anzeichen auf bevorstehende Naturkatastrophen sein. So begeben sich Elefanten zB bereits vor einem Tsunami ins Landesinnere.
+
+Vögel und Fledermäuse können das Erdmagnetfeld wahrnehmen. Da einem Erdbeben immer eine leichte Änderung des Magnetfeldes nahe des Epizentrums vorangeht, wird angenommen, dass man durch verändertes Flugverhalten von Vögeln und Fledermäusen auf ein bevorstehendes Erdbeben schließen kann. Im Ramen der ICARUSinitiative werden derzeit Bewegungsdaten von Vögeln gesammelt.
+
+Angenommen: In einigen Jahren gibt es insgesamt 500.000 Datensätze zum Fluverhalten von Vögeln zur Auswertung. In diesem Zeitraum gab es insgesamt 600 M>6 Erdbeben. 90% dieser Erdbeben ging ein verändertes Flugverhalten nahe des Epizentrums voran. Allerdings wurde in 2000 Datensätzen ein verändertes Flugverhalten beobachtet, ohne dass ein Erdbeben folgte.
+
+In einem Gebiet wird nun ein verändertes Flugverhalten beobachtet. Mit welcher Wahrscheinlichkeit wird es dort in der kommenden Woche ein Erdbeben geben? In dem entsprechenden Gebiet gibt es durchschnittlich alle 3 Jahre ein Erdbeben.
+
+P(E): Die Wahrscheinlichkeit, dass ein Erdbeben auftritt
+
+P(kE): Die Wahrscheinlichkeit, dass kein Erdbeben auftritt
+
+P(F): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt
+
+P(F|E): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt unter der Bedingung, dass ein Erdbeben folgt
+
+P(F|kE): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt unter der Bedingung, dass kein Erdbeben folgt
+
+P(E|F): Die Wahrscheinlichkeit, dass ein Erdbeben auftritt unter der Bedingung, dass verändertes Flugverhalten vorangegangen ist. Gesuchte Größe.
+
+```{r}
+library(data.tree)
+
+prob3 <- Node$new(" ")
+  kE <- prob3$AddChild("kE")
+    kF1 <- kE$AddChild("kF")
+    F1 <- kE$AddChild("F")
+  E <- prob3$AddChild("E")
+    kF2 <- E$AddChild("kF")
+    F2 <- E$AddChild("F")
+
+SetGraphStyle(prob3, rankdir = "TB")
+
+SetEdgeStyle(prob3$E,
+             label = "P(E)")
+SetEdgeStyle(prob3$kE,
+             label = "P(kE)")
+SetEdgeStyle(prob3$E$F,
+             label = "P(F|E)")
+SetEdgeStyle(prob3$kE$F,
+             label = "P(F|kE)")
+
+plot(prob3)
+
+
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(kE&F) </font> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(E&F) </font>
+
+$$P(E) = \frac{1}{3 \cdot 52} = \frac{1}{156}$$
+
+$$P(kE) = 1 - P(E) = \frac{155}{156}$$
+
+$$P(F|E) = 0,9$$
+
+$$P(F|kE) = \frac{2000}{500000}$$
+
+$$P(F) = P(kE\&F) + P(E\&F)$$
+
+$$P(F) = P(kE) \cdot P(F|kE) + P(E) \cdot P(F|E)$$
+
+$$P(F) = \frac{155}{156} \cdot \frac{2000}{500000} + \frac{1}{156} \cdot 0,9$$
+
+$$P(F) \approx 0,00974$$
+
+$$P(E|F) = \frac{P(E) \cdot P(F|E)}{P(F)}$$
+
+$$P(E|F) \approx \frac{\frac{1}{156} \cdot 0,9}{0,00974}$$
+
+
+```{r}
+
+#P(E)
+E <- 1/156
+
+#P(kE)
+kE <- 155/156
+
+#P(F|E)
+FE <- 0.9
+
+#P(F|kE)
+FkE <- 2000/500000
+
+#P(F)
+F <- E*FE+kE*FkE
+
+#P(E|F)
+(E*FE)/F
+
+
+```
+
+$$P(E|F) \approx 0,5921$$
+
+Mit einer Wahrscheinlichkeit von etwa 59,21% gibt es in diesem Gebiet in der kommenden Woche ein Erdbeben, nachdem ein verändertes Flugverhalten der Vögel beobachtet worden ist.
+
+###Interaktive ShinyApp
+
+
+
+
+```{r}
+
+library(shiny)
+
+shinyUI <- fluidPage(
+  titlePanel("Bayes Rule Demonstration"),
+  sidebarLayout(
+    sidebarPanel(
+      numericInput(inputId = "prior", label = "Wert für prior", min = 0, max = 1, value = 0.00001, step = 0.00001),
+      numericInput(inputId = "likelihood", label = "Wert für likelihood", min = 0, max = 1, value = 0.95, step = 0.01),
+      selectInput(inputId = "graphstyle", label = "Art des Plots", choices = c("posterior - prior" = 1, "posterior - likelihood" = 2)),
+      radioButtons(inputId = "dl", label = "file-Typ", choices = list("png", "pdf")),
+      downloadButton(outputId = "down", label = "Download Plot")
+    ),
+    mainPanel(
+      tabsetPanel(type = "tab",
+                  tabPanel("Erklärung",
+                           tags$div(
+                             "Die Regel von Bayes erlaubt es, bei bedingten Wahrscheinlichkeiten die Bedingungen umzukehren:",
+                             tags$br(),
+                             tags$br(),
+                             "P(A): Wahrscheinlichkeit, dass Ereignis A auftritt (prior)",
+                             tags$br(),
+                             "P(B): Wahrscheinlichkeit, dass Ereignis B auftritt (evidence)",
+                             tags$br(),
+                             "P(A|B): Wahrscheinlichkeit von Ereignis A unter der Bedingung, dass Ereignis B aufgetreten ist (posterior)",
+                             tags$br(),
+                             "P(B|A): Wahrscheinlichkeit von Ereignis B unter der Bedingung, dass Ereignis A aufgetreten ist (likelihood)",
+                             tags$br(),
+                             tags$br(),
+                             "P(A|B) = P(B|A) * P(A) / P(B)",
+                             tags$br(),
+                             "posterior = likelihood * prior / evidence"
+                           )
+                  ),
+                  tabPanel("Beispiel",
+                           tags$div(
+                             "Magician Michelle says that she can predict large megathrust earthquakes... well, at least 95% of the time. Assume that these earthquakes occur with a probability of 0.00001. How likely will Michelle cause a false alarm with her next prediction?",
+                             tags$br(),
+                             tags$br(),
+                             "P(A): Wahrscheinlichkeit, dass ein Erdbeben auftritt (prior)",
+                             tags$br(),
+                             "P(B): Wahrscheinlichkeit, dass Michelle ein Erdbeben voraussagt (evidence)",
+                             tags$br(),
+                             "P(B|A): Wahrscheinlichkeit, dass Michelle ein Erdbeben voraussagt unter der Bedingung, dass ein Erdbeben passieren wird (likelihood)",
+                             tags$br(),
+                             "P(A|B): Wahrscheinlichkeit, dass ein Erdbeben passiert unter der Bedingung, dass Michelle es vorausgesagt hat (posterior) -> gesuchte Größe",
+                             tags$br(),
+                             tags$br(),
+                             "P(A) = 0.00001",
+                             tags$br(),
+                             "P(B|A) = 0.95",
+                             tags$br(),
+                             "P(B) = P(B|A) * P(A) + (1 - P(B|A)) * (1-P(A))",
+                             tags$br(),
+                             "P(B) = 0.95 * 0.00001 + 0.05 * 0.99999",
+                             tags$br(),
+                             "P(B) = 0.0500009",
+                             tags$br(),
+                             "P(A|B) = P(B|A) * P(A) / P(B)",
+                             tags$br(),
+                             "P(A|B) = 0.95 * 0.00001 / 0.0500009",
+                             tags$br(),
+                             "P(A|B) = 0.000189997",
+                             tags$br(),
+                             tags$br(),
+                             "Die Wahrscheinlichkeit, dass nach Michelles Vorhersage ein Erdbeben passiert, beträgt etwa 0.019%. Die Wahrscheinlichkeit für einen falschen Alarm durch ihre Vorhersage beträgt also 99.981%."
+                             
+                           )
+                           
+                           
+                           
+                           ),
+                  tabPanel("Rechner", tableOutput("tablecalc"),
+                           textOutput("posterior")
+                           ),
+                  tabPanel("Plots", plotOutput("graph"))
+      )
+    )
+  )
+)
+
+shinyServer <- function(input, output){
+  
+  output$posterior <- renderText({
+    A <- input$prior
+    BA <- input$likelihood
+    paste("Für ein gegebenes Prior von", A, "und eine gegebene Likelihood von", BA, " ergibt sich eine posterior-Wahrscheinlichkeit von", (BA*A)/((BA*A)+((1-BA)*(1-A))))
+  })
+  tablevalues <- reactive({
+    A <- input$prior
+    BA <- input$likelihood
+    
+    data.frame(
+      Name = c("Prior", "Likelihood", "Evidence", "Posterior"),
+      Wert = as.character(c(input$prior,
+                          input$likelihood,
+                          paste((BA*A)+((1-BA)*(1-A))),
+                          paste((BA*A)/((BA*A)+((1-BA)*(1-A))))
+                          ))
+    )
+    
+    
+  })
+  output$tablecalc <- renderTable({
+    tablevalues()
+  })
+  
+  output$postpriorgraph <- renderPlot({
+    BA <- input$likelihood
+    curve((BA*x)/((BA*x)+((1-BA)*(1-x))), from=0, to=1, xlab="prior", ylab="posterior")
+  })
+  output$postlikegraph <- renderPlot({
+    A <- input$prior
+    curve((A*x)/((A*x)+((1-A)*(1-x))), from=0, to=1, xlab="likelihood", ylab="posterior")
+  })
+  output$graph <- renderPlot({
+    if(input$graphstyle == 1){
+      BA <- input$likelihood
+      curve((BA*x)/((BA*x)+((1-BA)*(1-x))), from=0, to=1, xlab="prior", ylab="posterior")
+    }
+    else{
+      A <- input$prior
+      curve((A*x)/((A*x)+((1-A)*(1-x))), from=0, to=1, xlab="likelihood", ylab="posterior")
+    }
+    
+  })
+  output$down <- downloadHandler(
+    filename = function(){
+      paste("bayes",input$dl,sep=".")
+    },
+    content = function(file){
+      if(input$dl == "png")
+        png(file)
+      else
+        pdf(file)
+      if(input$graphstyle == 1){
+        BA <- input$likelihood
+        curve((BA*x)/((BA*x)+((1-BA)*(1-x))), from=0, to=1, xlab="prior", ylab="posterior")
+    }
+      else{
+        A <- input$prior
+        curve((A*x)/((A*x)+((1-A)*(1-x))), from=0, to=1, xlab="likelihood", ylab="posterior")
+    }
+      dev.off()
+      
+      
+    }
+    
+    
+    
+  )
+  
+}
+
+
+shinyApp(shinyUI, shinyServer,
+         options = list(
+    width = "100%", height = 590))
+
+```
+
+Achtung: Für Windows-Nutzer funktioniert der Download-Button nur im externen Browser!
+
+### Weiterführende Infos
+
+Achtung: Nur im externen Browser!
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2xCRBxHnsvg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Y7i3zsaYT40" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+## Bernoulli{.tabset}
+
+### Erklärung
+
+
+
+Die Formel von Bernoulli ist folgende:
+
+$$P(x=k) = p^k \cdot (1-p)^{n-k}$$
+
+
+Als Beispiel für die Verlässlichkeit von Augenzeugen:
+
+n = Gesamtzahl der Augenzeugen
+
+k = Anzahl der Augenzeugen die richtig liegen
+
+n-k = Anzahl der Augenzeugen die falsch liegen
+
+p = Wahrscheinlichkeit, dass ein Augenzeuge richtig liegt
+
+P(x=k) = Likelihood
+
+Für eine Anzahl größer als ein Augenzeuge wird außerdem noch der Binomialkoeffizient n über k benötigt, um die Anzahl der möglichen Pfade zu berücksichtigen:
+
+$$\binom{n}{k} = \frac{n!}{k! \cdot (n-k)!}$$
+
+Sodass man letztendlich folgende Formel benötigt:
+
+$$P(x=k) = \binom{n}{k} \cdot p^k \cdot (1-p)^{n-k}$$
+
+
+
+
+
+
+```{r}
+
+#Anzahl der Balken
+a <- 100
+
+#Anzahl richtiger Augenzeugen
+k <- 189
+
+#Anzahl falscher Augenzeugen
+f <- 16
+
+#Gesamtzahl Augenzeugen
+n <- f+k
+
+
+#Plot Prior
+
+#x-Achse
+x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1))
+
+#y-Achse
+y1 <- pmin(x1, 1-x1)
+
+y1n <- y1/sum(y1)
+
+plot(x1, y1n, type = "h", lwd = 2, main = "Prior", xlab = "Theta", ylab = "p(Theta)")
+
+
+
+
+#Plot Likelihood
+
+#x-Achse für zukünftigen Plot
+x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1))
+
+#y-Achse für zukünftigen Plot
+y2 <- dbinom(k, size = n, prob = x2)
+
+
+plot((x2), (y2), type = "h", lwd = 2, main = "Likelihood", xlab = "Theta", ylab = "p(Theta)")
+
+
+
+
+#Evidence berechnen
+
+ev <- sum(y1n*y2)
+
+
+
+
+#Plot posterior
+
+x3 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1))
+
+y3 <- y1n*y2/ev
+
+plot(x3, y3, type = "h", lwd = 2, main = "Posterior", xlab = "Theta", ylab = "p(Theta)")
+
+
+
+```
+
+
+### Interaktive ShinyApp
+
+```{r}
+library(shiny)
+
+shinyUI <- fluidPage(
+  titlePanel("Prior to Posterior"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput(inputId = "accuracy", label = "Anzahl der Balken", min = 1, max = 250, value = 10, step = 1),
+      numericInput(inputId = "npositive", label = "Anzahl positiver Daten", min = 0, value = 0, step = 1),
+      numericInput(inputId = "nnegative", label = "Anzahl negativer Daten", min = 0, value = 0, step = 1),
+      radioButtons(inputId = "dl", label = "file-Typ", choices = list("png", "pdf")),
+      downloadButton(outputId = "down", label = "Download Plots")
+    ),
+    mainPanel(plotOutput("priorgraph", height = "300px"),
+              plotOutput("likegraph", height = "300px"),
+              plotOutput("postgraph", height = "300px"))
+  )
+  
+)
+
+
+shinyServer <- function(input, output){
+  
+  output$priorgraph <- renderPlot({
+    a <- input$accuracy
+    x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für priorplot
+    y1 <- pmin(x1, 1-x1) #y-Achse für priorplot
+    y1n <- y1/sum(y1) #prior-Werte auf 1 normiert
+    plot(x1, y1n, type = "h", lwd = 2, main = "Prior", xlab = "Theta", ylab = "p(Theta)")
+  })
+  
+  output$likegraph <- renderPlot({
+    a <- input$accuracy
+    np <- input$npositive
+    nn <- input$nnegative
+    nt <- np+nn
+    x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für likelihoodplot
+    y2 <- dbinom(np, size = nt, prob = x2) #y-Achse für likelihoodplot
+    plot((x2), (y2), type = "h", lwd = 2, main = "Likelihood", xlab = "Theta", ylab = "p(Theta)")
+  })
+  
+  output$postgraph <- renderPlot({
+    a <- input$accuracy #Anzahl Balken
+    np <- input$npositive #Anzahl Positive
+    nn <- input$nnegative #Anzahl Negative
+    nt <- np+nn #Gesamtzahl
+    x3 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse
+    y1 <- pmin(x3, 1-x3) #prior
+    y1n <- y1/sum(y1) #prior-Werte auf 1 normiert
+    y2 <- dbinom(np, size = nt, prob = x3) #likelihood
+    ev <- sum(y1n*y2) #evidence
+    y3 <- y1n*y2/ev #posterior
+    plot(x3, y3, type = "h", lwd = 2, main = "Posterior", xlab = "Theta", ylab = "p(Theta)")
+    
+  })
+  
+  output$down <- downloadHandler(
+    filename = function(){
+      paste("priotoposterior",input$dl,sep=".")
+    },
+    content = function(file){
+      if(input$dl == "png")
+        png(file)
+      else
+        pdf(file)
+      a <- input$accuracy #Anzahl Balken
+      np <- input$npositive #Anzahl Positive
+      nn <- input$nnegative #Anzahl Negative
+      nt <- np+nn #Gesamtzahl
+      x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für priorplot
+      y1 <- pmin(x1, 1-x1) #y-Achse für priorplot
+      y1n <- y1/sum(y1) #prior-Werte auf 1 normiert
+      x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für likelihoodplot
+      y2 <- dbinom(np, size = nt, prob = x2) #y-Achse für likelihoodplot
+      x3 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für posteriorplot
+      ev <- sum(y1n*y2) #evidence
+      y3 <- y1n*y2/ev #posterior
+      par(mfrow=c(3,1)) #stelle Plots untereinander auf einer Seite dar
+      plot(x1, y1n, type = "h", lwd = 2, main = "Prior", xlab = "Theta", ylab = "p(Theta)")
+      plot((x2), (y2), type = "h", lwd = 2, main = "Likelihood", xlab = "Theta", ylab = "p(Theta)")
+      plot(x3, y3, type = "h", lwd = 2, main = "Posterior", xlab = "Theta", ylab = "p(Theta)")
+      
+      dev.off()
+      
+      
+    }
+  )
+  
+
+  
+}
+
+shinyApp(shinyUI, shinyServer,
+         options = list(
+    width = "100%", height = 1000))
+
+```
+
+Achtung: Für Windows-Nutzer funktioniert der Download-Button nur im externen Browser!
+
+### Weiterführende Infos
+
+Achtung: Nur im externen Browser!
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qRkUCU7oJ34" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+
+## Renormalisieren{.tabset}
+
+###Beispielaufgabe
+
+Ein Forscher untersucht Felsen an einem Strand. Nach einer Weile fällt ihm auf, dass er sein GPS-Gerät verloren hat und nimmt an, dass es bei einem der untersuchten Felsen sein muss. 10 Felsen stehen insgesamt zur Auswahl. Nachdem er bei 9 Felsen nichts gefunden hat: Wie hoch ist die Wahrscheinlichkeit eines Fundes beim 10. Felsen, wenn er das Gerät mit einer Wahrscheinlichkeit von 5% zu Hause gelassen hat?
+
+**Lösungsansatz**
+
+Auch wenn es sich hierbei im Prinzip um Ziehen ohne Zurücklegen handelt, kann keine hypergeometrische Verteilung angewendet werden, da nicht alle Wahrscheinlichkeiten im gleichen Pfadsystem wiederzufinden sind.
+
+Die Anfangswahrscheinlichkeiten sind wie folgt: Jeder der 10 Felsen hat die gleiche Wahrscheinlichkeit, das GPS-Gerät zu haben. Die Wahrscheinlichkeit, dass es bei keinem Felsen ist, beträgt 5%. Daraus ergibt sich:
+
+$$p(1.F) = \frac{0.95}{10} = 0.095$$
+
+$$p(1.K) = 0.005$$
+
+mit
+
+p(1.F) = Wahrscheinlichkeit pro Felsen
+
+p(1.K) = Wahrscheinlichkeit, dass es bei keinem Felsen ist
+
+
+
+Wenn nun ein Felsen untersucht worden ist ohne Fund, sind somit noch 9 Felsen im Spiel sowie die Wahrscheinlichkeit, dass es nirgends ist. Summiert man die verbleibenden Wahrscheinlichkeiten auf, ergeben diese allerdings nur noch 90.5% (da ja ein 9.5%-Felsen rausgenommen wurde). Da die Wahrscheinlichkeiten aber notwendigerweise insgesamt 100% ergeben müssen, muss durch die Summe der Wahrscheinlichkeiten geteilt werden:
+
+$$p(2.F) = \frac{p(1.F)}{\sum{}p1} = \frac{0.095}{0.905} \approx 0.105$$
+
+Die Wahrscheinlichkeit, dass das GPS-Gerät beim 2. Felsen liegt, beträgt also nunmehr etwa 10.5%.
+
+
+
+Für den 3. Felsen gilt also:
+
+$$p(2.F) = \frac{p(1.F)}{\sum{}p1} = \frac{0.095}{0.905} \approx 0.105$$
+
+$$p(2.K) = \frac{p(1.K)}{\sum{}p1} = \frac{0.005}{0.905} \approx 0.0055$$
+
+$$\sum{}p2 = 8 \cdot p(2.F) + p(2.K) = 0.8455$$
+
+$$p(3.F) = \frac{p(2.F)}{\sum{}p2} = \frac{0.105}{0.8455} \approx 0.124$$
+
+
+
+
+
+
+###Lösung mit R
+
+Zuerst die Startvariablen festlegen
+
+```{r, echo = TRUE}
+
+n <- 10 #Anzahl der Felsen
+pf0 <- 0.095 #Anfangswahrscheinlichkeit pro Felsen
+pk0 <- 0.05 #Anfangswahrscheinlichkeit für keinen Fund insgesamt
+
+```
+
+
+
+
+Werte berechnen
+```{r, echo = TRUE}
+pf1 <- pf0/((n-1)*pf0+pk0)
+pk1 <- pk0/((n-1)*pf0+pk0)
+pf2 <- pf1/((n-2)*pf1+pk1)
+pk2 <- pk1/((n-2)*pf1+pk1)
+pf3 <- pf2/((n-3)*pf2+pk2)
+pk3 <- pk2/((n-3)*pf2+pk2)
+pf4 <- pf3/((n-4)*pf3+pk3)
+pk4 <- pk3/((n-4)*pf3+pk3)
+pf5 <- pf4/((n-5)*pf4+pk4)
+pk5 <- pk4/((n-5)*pf4+pk4)
+pf6 <- pf5/((n-6)*pf5+pk5)
+pk6 <- pk5/((n-6)*pf5+pk5)
+pf7 <- pf6/((n-7)*pf6+pk6)
+pk7 <- pk6/((n-7)*pf6+pk6)
+pf8 <- pf7/((n-8)*pf7+pk7)
+pk8 <- pk7/((n-8)*pf7+pk7)
+pf9 <- pf8/((n-9)*pf8+pk8)
+pk9 <- pk8/((n-9)*pf8+pk8)
+pf10 <- pf9/((n-10)*pf9+pk9)
+pk10 <- pk9/((n-10)*pf9+pk9)
+```
+
+
+
+
+Ergebnisse darstellen:
+
+```{r, echo = TRUE}
+
+E <- matrix(
+  c(pf0,pf1,pf2,pf3,pf4,pf5,pf6,pf7,pf8,pf9,pk0,pk1,pk2,pk3,pk4,pk5,pk6,pk7,pk8,pk9),
+  ncol=2,
+  byrow=FALSE
+)
+
+E
+
+```
+
+
+
+Die Wahrscheinlichkeit, dass das GPS-Gerät unter dem 10. Felsen liegt, beträgt also etwa 65.5%
+
+Da für die Lösung nicht nach den Zwischenschritten gefragt ist, geht es auch einfacher:
+
+Erneut die Startvariablen festlegen:
+
+```{r, echo = TRUE}
+
+n <- 10 #Anzahl der Felsen
+pf0 <- 0.095 #Anfangswahrscheinlichkeit pro Felsen
+pk0 <- 0.05 #Anfangswahrscheinlichkeit für keinen Fund insgesamt
+
+```
+
+
+
+
+
+Mit pg wird nun eine Zahlenfolge definiert, in der die Wahrscheinlichkeiten für jeden Felsen und die Wahrscheinlichkeit keines Fundes aufgelistet sind:
+
+```{r, echo = TRUE}
+
+pg <- c(rep(pf0, n), pk0)
+
+pg
+
+```
+
+
+
+Mit der Zahlenreihe pg wird nun gerechnet.
+Die Werte der Zahlenreihe sollen nach und nach bearbeitet werden. Dazu wird i definiert als Stelle in der Zahlenfolge.
+
+"i=1"" bedeutet, dass mit der ersten Stelle gestartet werden soll.
+
+"pg[i] <- 0"" bedeutet, dass die Stelle "i" (also im ersten Fall die erste Stelle) in der Zahlenfolge pg genommen werden soll und gleich null gesetzt werden soll
+
+"pg <- pg/sum(pg)"" bedeutet, dass die einzelnen Wahrscheinlichkeiten danach wieder durch die Summe aller Wahrscheinlichkeiten geteilt werden sollen. Das ist wichtig, damit die Summe aller Wahrscheinlichkeiten wieder 1 ergibt
+
+"while(i<10)" bedeutet, dass diese Operation so lange durchgeführt werden soll, bis man an der neunten Stelle in der Zahlenfolge angekommen ist.
+
+"i=i+1" bedeutet, dass am Ende jeder Operation zur nächsten Stelle in der Zahlenfolge gegangen werden soll.
+
+
+
+
+```{r, echo = TRUE}
+i = 1
+while (i<10) {
+  pg[i] <- 0
+  pg <- pg/sum(pg)
+  i = i+1
+}
+
+pg
+```
+
+Wie man sieht erhält man dadurch eine Zahlenfolge. Die ersten 9 Werte betragen null (das sind die Wahrscheinlichkeiten der ersten neun Felsen). Danach kommt die Wahrscheinlichkeit für den letzten Felsen und als letzter Wert die Wahrscheinlichkeit keines Funds.
+
+
+### Eigenes Beispiel
+
+Ein Dorf liegt an einem Hang. Der Hang ist schon durch mehrfache Hangrutschen bekannt, die Schäden an manchen Häusern verursacht haben. Ein Team fährt los, um herauszufinden ob man den Hang an gewissen Stellen stabilisieren kann. Diese Stellen wurden im Vorfeld bestimmt und haben alle die gleiche Wahrscheinlichkeit. Nachdem 19 von 25 Stellen untersucht worden sind, hat man noch keine gute Stelle gefunden. Wie groß ist jeweils die Wahrscheinlichkeit, an den nächsten Stellen einen Punkt zum stabilisieren zu finden? Erfahrungsgemäß gibt es nur bei 30% solcher Hänge überhaupt eine Möglichkeit, diese effektiv zu stabilisieren.
+
+```{r, echo = TRUE}
+
+pF <- 1-0.3 #Die Wahrscheinlichkeit, dass der Hang nicht stabilisiert werden kann
+n2 <- 25 #Anzahl der Stellen
+pS <- 0.3/25 #Die Wahrscheinlichkeit pro Punkt, dass dieser stabilisiert werden kann
+
+prow20 <- c(rep(pS, n2), pF)
+prow21 <- c(rep(pS, n2), pF)
+prow22 <- c(rep(pS, n2), pF)
+prow23 <- c(rep(pS, n2), pF)
+prow24 <- c(rep(pS, n2), pF)
+prow25 <- c(rep(pS, n2), pF)
+```
+
+
+
+```{r, echo = TRUE}
+i=1
+while (i<20) {
+  prow20[i] <- 0
+  prow20 <- prow20/sum(prow20)
+  i=i+1
+}
+
+i=1
+while (i<21) {
+  prow21[i] <- 0
+  prow21 <- prow21/sum(prow21)
+  i=i+1
+}
+
+i=1
+while (i<22) {
+  prow22[i] <- 0
+  prow22 <- prow22/sum(prow22)
+  i=i+1
+}
+
+i=1
+while (i<23) {
+  prow23[i] <- 0
+  prow23 <- prow23/sum(prow23)
+  i=i+1
+}
+
+i=1
+while (i<24) {
+  prow24[i] <- 0
+  prow24 <- prow24/sum(prow24)
+  i=i+1
+}
+
+i=1
+while (i<25) {
+  prow25[i] <- 0
+  prow25 <- prow25/sum(prow25)
+  i=i+1
+}
+
+```
+
+
+
+```{r, echo = TRUE}
+
+HR <- matrix(
+  c(prow20[20],prow21[21],prow22[22],prow23[23],prow24[24],prow25[25],prow20[26],
+    prow21[26],prow22[26],prow23[26],prow24[26],prow25[26]),
+  ncol = 2,
+  byrow = FALSE
+  )
+
+HR
+
+```
+
+Die erste Spalte beinhaltet die Wahrscheinlichkeit für die x-te Stelle (20., 21 etc.), die zweite Spalte beinhaltet die Wahrscheinlichkeit dass der Hang insgesamt nicht stabilisiert werden kann.
+
+
+## Betaverteilung{.tabset}
+
+### Fragen
+
+
+
+
+**Wie lauten die Formeln für die Beta-Verteilung?**
+
+
+
+$$p(\Theta|a,b) = \frac{1}{B(a,b)} \cdot \Theta^{a-1} \cdot (1-\Theta)^{b-1}$$
+
+
+
+$$B(a,b) = \int_0^1 t^{a-1}\cdot (1-t)^{b-1}dt$$
+
+mit
+
+$$0\leqslant\Theta\leqslant1$$
+
+
+$$a,b > 0$$
+
+
+
+
+**Für welchen Fall wird eine Betaverteilung angewendet?**
+
+
+Für eine prior-Wahrscheinlichkeitsverteilung eines Parameters, der die Wahrscheinlichkeit für Erfolg beschreibt.
+
+
+
+
+
+**Was bedeuten die Begriffe mean und mode?**
+
+
+Der "mean" ist der Erwartungswert und berechnet sich wie folgt:
+
+$$\mu = \frac{a}{a+b}$$
+
+Der "mode" ist der höchste Punkt in der Dichtefunktion und berechnet sich folgendermaßen:
+
+$$\omega = \frac{a-1}{a+b-2}$$
+
+
+### Interaktive ShinyApp
+
+```{r}
+
+library(shiny)
+
+shinyUI <- fluidPage(
+  titlePanel("Betaverteilung"),
+  sidebarLayout(
+    sidebarPanel(
+      numericInput(inputId = "aval", label = "Wert für a", min = 0, value = 0, step = 1),
+      numericInput(inputId = "bval", label = "Wert für b", min = 0, value = 0, step = 1)
+    ),
+    mainPanel(plotOutput("betagraph"))
+  )
+)
+
+shinyServer <- function(input, output){
+  output$betagraph <- renderPlot({
+    a <- input$aval
+    b <- input$bval
+    val <- seq(0, 1, 0.01)
+    plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2)
+  })
+}
+
+shinyApp(shinyUI, shinyServer,
+         options = list(
+    width = "100%", height = 590))
+
+```
+
+
+## Normalverteilung{.tabset}
+
+### Erklärung
+
+Die Normalverteilung ist eine stetige Wahrscheinlichkeitsverteilung, die angewendet werden kann, wenn Messwerte symmetrisch um einen Erwartungswert liegen. Eine solche Verteilung wird auch Gauss-Kurve genannt.
+
+$$f(x) = \frac{1}{\sigma \cdot \sqrt{2 \pi}} \cdot e^{\frac{-(x-\mu)^2}{2 \cdot \sigma^2}}$$
+
+
+Die Gauss-Kurve ist immer durch einen Erwartungswert $\mu$ und eine Standardabweichung $\sigma$ definiert. Während $e^{-x^2}$ für die Grundform der Glockenkurve verantwortlich ist, sorgt der Zähler im Exponent für die Verschiebung nach rechts oder links zum Erwartungswert $\mu$. Der Nenner im Exponent macht die Kurve schmaler oder breiter, und der Vorfaktor vor dem e streckt oder staucht die Kurve.
+
+Der Erwartungswert $\mu$ ist der höchste Wert der Kurve. Die Standardabweichung $\sigma$ beschreibt die Distanz zwischen $\mu$ und der Stelle, an der die Gauss-Kurve die größte Steigung hat, jeweils in beide Richtungen:
+
+```{r, echo = FALSE}
+plot(
+  function(x)
+  dnorm(x, mean = 1, sd = 0.5, log = FALSE),
+  -1, 3, ylim = c(0, 1.2),
+  axes = FALSE,
+  xlab = "",
+  ylab = ""
+  )
+axis(side = 1, at = seq(-1, 3, by = 0.5), pos = 0, lwd = 2)
+lines(c(1, 1), c(1, 0), lwd = 2, col = "red", lty = "longdash")
+lines(c(1, 0.5), c(0.48, 0.48), lwd = 2, col = "royalblue1")
+lines(c(1, 1.5), c(0.48, 0.48), lwd = 2, col = "mediumorchid4")
+lines(c(0.5, 0.5), c(0, 0.48), lwd = 2, lty = "dotted")
+lines(c(1.5, 1.5), c(0, 0.48), lwd = 2, lty = "dotted")
+text(1.1, 1.1, expression(paste(mu, " = 1", sep = "")), adj = 0, col = "red", cex = 1.3)
+text(0.55, 0.4, expression(paste(sigma, " = 0.5", sep = "")), adj = 0, col = "royalblue1", cex = 0.9)
+text(1.05, 0.4, expression(paste(sigma, " = 0.5", sep = "")), adj = 0, col = "mediumorchid4", cex = 0.9)
+
+```
+
+
+
+Um Wahrscheinlichkeiten zu berechnen, wird die Fläche unter der Kurve berechnet. Man kann daher Wahrscheinlichkeiten nur noch für einen Bereich, aber nicht mehr für diskrete Werte berechnen. Die Fläche unter der gesamten Kurve muss eins ergeben:
+
+$$\int_{-\infty}^{\infty} f(x) dx = 1$$
+
+Es sind $\sigma$-Umgebungen um den Erwartungswert $\mu$ und die Fläche, die sie umschließen, definiert:
+
+$$p(\mu - \sigma \leqslant x \leqslant \mu + \sigma ) = 68.3\%$$
+
+$$p(\mu - 2\sigma \leqslant x \leqslant \mu + 2\sigma ) = 95.4\%$$
+
+$$p(\mu - 3\sigma \leqslant x \leqslant \mu + 3\sigma ) = 99.7\%$$
+
+Diese heißen respektive 1-, 2- und 3-$\sigma$-Umgebung. Folgender Graph zeigt die 1-$\sigma$-Umgebung:
+
+```{r, echo = FALSE}
+
+x <- function(x)
+y <- dnorm(x, mean = 1, sd = 0.5, log = FALSE)
+
+cord.x <- c(0.5, seq(0.5, 1.5, 0.01), 1.5)
+cord.y <- c(0, dnorm(seq(0.5, 1.5, 0.01), mean = 1, sd = 0.5, log = FALSE), 0)
+
+plot(
+  function(x)
+  dnorm(x, mean = 1, sd = 0.5, log = FALSE),
+  -1, 3, ylim = c(0, 1.2),
+  axes = FALSE,
+  xlab = "",
+  ylab = ""
+  )
+axis(side = 1, at = seq(-1, 3, by = 0.5), pos = 0, lwd = 2)
+polygon(cord.x, cord.y, col="gray85")
+text(0.55, 0.4, expression(paste("1", sigma, "-Umgebung", sep = "")), adj = 0, cex = 1)
+
+
+```
+
+### Beispielaufgabe
+
+Für Erdbeben in einer Region sind die Magnituden normalverteilt. Die meisten Erdbeben besitzen eine Magnitude von 6, die Standardabweichung beträgt 0.8. Mit welcher Wahrscheinlichkeit hat das nächste Erdbeben eine Magnitude von 7.5 oder höher?
+
+Folgender Graph zeigt die Gauss-Kurve für diesen Fall. Die graue Fläche ist gesucht.
+
+
+```{r, echo = FALSE}
+
+plot(
+  function(x)
+  dnorm(x, mean = 6, sd = 0.8, log = FALSE),
+  3, 9, ylim = c(0, 0.7),
+  axes = FALSE,
+  xlab = "Magnitude",
+  ylab = ""
+  )
+axis(side = 1, at = seq(3, 9, by = 1), pos = 0, lwd = 2)
+axis(side = 2, at = seq(0, 0.6, by = 0.1), pos = NA, lwd = 2)
+lines(c(6, 6), c(0.6, 0), lwd = 2, col = "red", lty = "longdash")
+lines(c(6, 6.8), c(0.302, 0.302), lwd = 2, col = "mediumorchid4")
+lines(c(6.8, 6.8), c(0.302, 0), lwd = 2, lty = "dotted")
+text(6.1, 0.61, expression(paste(mu, " = 6", sep = "")), adj = 0, col = "red", cex = 1.3)
+text(6.1, 0.25, expression(paste(sigma, " = 0.8", sep = "")), adj = 0, col = "mediumorchid4", cex = 0.9)
+cord.x <- c(7.5, seq(7.5, 9, 0.01), 9)
+cord.y <- c(0, dnorm(seq(7.5, 9, 0.01), mean = 6, sd = 0.8, log = FALSE), 0)
+polygon(cord.x, cord.y, col="gray85")
+
+```
+
+Gesucht ist also:
+
+$$\int_{7.5}^{\infty} f(x) dx$$
+
+Mit R lässt sich das Integral berechnen:
+
+```{r}
+
+f <- function(x) dnorm(x, mean = 6, sd = 0.8, log = FALSE)
+
+integrate(f, 7.5, 99, subdivisions = 100L)
+
+```
+
+Die Wahrscheinlichkeit, dass das nächste Erdbeben eine Magnitude von 7.5 oder höher hat, beträgt also ungefähr 3.04%.
+
+###Weiterführende Infos
+
+Achtung: Nur im externen Browser!
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_f1vgWUiavY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/N-nLQ1kwREY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-yTZNXMONKE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+
+
