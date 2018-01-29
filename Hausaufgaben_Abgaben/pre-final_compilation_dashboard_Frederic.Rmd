@@ -1,0 +1,441 @@
+---
+title: "Quantitative Grundlagen der Analyse von Naturkatastrophen"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: simplex
+runtime: shiny
+
+---
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+```
+
+1. Bayes-Theorem
+=====================================  
+    
+Row {data-height=400}
+-------------------------------------
+
+### Erklärung des Satz von Bayes
+    
+Der Satz von Bayes wird verwendet um die bedingte Wahrscheinlichkeit (likelyhood) eines Ereignisses zu berechnen. Dabei wird auf ein Vorwissen zurückgegriffen, welches wir mit unserer Berechnung "updaten" wollen, sodass nach jeder Iteration der Berechnung unsere Wahrscheinlichkeit genauer wird.
+Der Satz beinhaltet vier Komponenten: Als Posterior bezeichnet man die bedingte Wahrscheinlichkeit, die unbekannt und gesucht ist. 
+Sie berechnet sich aus dem Produkt von Likelihood und Prior geteilt durch unseren Evidence.
+
+$$Posterior = \frac{Likelihood * Prior}{Evidence}$$
+
+
+### Geowissenschaftliches Beispiel
+
+Am Himmel wird ein Meteorit beobachtet, der gerade in die Erdatmosphäre eintritt.
+Gesucht ist die Wahrscheinlichkeit dafür, dass der Meteorit in das Meer einschlägt und somit einen Tsunami auslöst. 
+Ein Datensatz belegt, dass 0.01 aller Tsunamis durch einen Meteoriteneinschlag ausgelöst wurden (Likelihood). Solange wir kein weiteres Vorwissen zu der Tsunamiwahrscheinlichkeit haben können wir den Wert 0.5 eingeben. Nach der ersten Berechnung können wir diesen Wert dann anpassen.
+
+p(I|T) = 0.01 : Wahrscheinlichkeit Einschlag bedingt Tsunami (Likelihood)  
+p(T) = Variabel: Wahrscheinlichkeit Tsunami (Prior)  
+p(i|T) = 0.99  
+p(t) = 1-p(T)  
+
+$$p(T|I) = \frac{p(I|T) * p(T)}{SUM(p(I|T)*p(T))}$$
+$$= \frac{p(I|T) * p(T)}{(p(I|T)*p(T)) + (p(i|T)*p(t))}$$
+
+Row {data-height=600}
+-------------------------------------
+
+### Shiny App
+
+```{r, echo=FALSE}
+ui <- fluidPage(
+  titlePanel("Bayes-Theorem in der Naturgefahrenforschung"),
+  textOutput("Text"),
+  sliderInput(inputId = "Prior", value = 0.5, label = "P(T) : Prior", min = 0, max = 1, step = 0.01),
+  plotOutput("formula"))
+
+
+# Define server logic
+
+server <- function(input, output) {
+  output$formula <- renderPlot({
+  like <- 0.01
+  evi <- (like * input$Prior)+(0.99* (1-input$Prior))
+  Posterior <- (input$Prior * like)/evi
+  op <- 1-Posterior
+  slices <- c(Posterior, op)
+  lbls <- c("P(Tsumani|Impact)", "Gegenwahrscheinlichkeit")
+  pct <- round(slices/sum(slices)*100)
+  lbls <- paste(lbls, pct) # add percents to labels 
+  lbls <- paste(lbls,"%",sep="") # ad % to labels 
+  pie(slices, labels = lbls, col = c("cornflowerblue", "firebrick1"), main = "Katastrophenkuchendiagramm")
+         })
+    output$Text <- renderText("Bayes Formel für eine festgesetzte Likelihood von 0.01.")
+  
+}
+shinyApp(ui = ui, server = server)
+options = list(width = "100%", height = 550)
+```
+
+2. Bayes für diskrete Priorverteilungen
+=====================================     
+   
+Column {data-width=500}
+-------------------------------------
+
+### Bayes Theorem für eine diskrete Prior Wahrscheinlichkeitsverteilung
+
+
+```{r, echo=TRUE, eval=FALSE}
+# Initialparameter
+i <- 7 # Anzahl an Priors
+x <- 2 # Ja Aussagen
+y <- 25 # Nein Aussagen
+
+# Prior
+t <- seq(from = 0, to = 1, length.out = i) # ts zwischen 0 und 1
+pt_norm <- dnorm(t, mean = 0.5, sd = 1) # normalverteilter Vektor der Länge t
+pt <- pt_norm/sum(pt_norm) # Vektor auf 1 normiert
+
+# Likelihood
+like <- choose(x+y, x)*(t^x)*((1-t)^y) # Ist Bernoulli-verteilt
+
+# Evidence
+evi <- sum(like*pt)
+
+# Posterior
+post <- (like * pt) / evi
+
+# Plots
+par(mfrow=c(3,1)) # Die nächsten drei Plots untereinander
+plot(t, pt, main = "Prior", type = "h", lwd = 4) # Prior
+abline(v = 0.5, col = "red", lwd = 2)
+plot(t,like, main = "Likelihood", type = "h", lwd = 4) # Likelihood
+abline(v = 0.5, col = "red", lwd = 2)
+plot(t, post, main = "Posterior", type = "h", lwd = 4) # Posterior
+abline(v = 0.5, col = "red", lwd = 2)
+```
+
+Column {data-width=500}
+-------------------------------------
+
+### Dreifach-Plot
+
+```{r, echo=FALSE, eval=TRUE}
+# Initialparameter
+i <- 7 # Anzahl an Priors
+x <- 2 # Ja Aussagen
+y <- 25 # Nein Aussagen
+
+# Prior
+t <- seq(from = 0, to = 1, length.out = i) # ts zwischen 0 und 1
+pt_norm <- dnorm(t, mean = 0.5, sd = 1) # normalverteilter Vektor der Länge t
+pt <- pt_norm/sum(pt_norm) # Vektor auf 1 normiert
+
+# Likelihood
+like <- choose(x+y, x)*(t^x)*((1-t)^y) # Ist Bernoulli-verteilt
+
+# Evidence
+evi <- sum(like*pt)
+
+# Posterior
+post <- (like * pt) / evi
+
+# Plots
+par(mfrow=c(3,1)) # Die nächsten drei Plots untereinander
+plot(t, pt, main = "Prior", type = "h", lwd = 4) # Prior
+abline(v = 0.5, col = "red", lwd = 2)
+plot(t,like, main = "Likelihood", type = "h", lwd = 4) # Likelihood
+abline(v = 0.5, col = "red", lwd = 2)
+plot(t, post, main = "Posterior", type = "h", lwd = 4) # Posterior
+abline(v = 0.5, col = "red", lwd = 2)
+```
+    
+
+3. Dynamische Shiny App
+=====================================  
+    
+
+### Chart 1
+    
+```{r, echo = FALSE}
+library(shiny)
+
+# Define UI 
+ui <- fluidPage(
+  titlePanel("Bayes fuer diskrete Wahrscheinlichkeitsverteilungen"),
+  textOutput("Text"),
+  sliderInput(inputId = "ii", value = 69, label = "Anzahl Priors", min = 0, max = 100, step = 1),
+  numericInput(inputId = "xi", value = 1, label = "Daten: Richtig", min = 0, max = 500, step = 1),
+  numericInput(inputId = "yi", value = 12, label = "Daten: Falsch", min = 0, max = 500, step = 1),
+  plotOutput("tripleplot")
+)
+
+# Define server logic
+server <- function(input, output) {
+  output$tripleplot <- renderPlot({
+    i <- input$ii
+    x <- input$xi
+    y <- input$yi
+    t <- seq(from = 0, to = 1, length.out = i) # ts zwischen 0 und 1
+    pt_norm <- dnorm(t, mean = 0.5, sd = 1) # normalverteilter Vektor der Laenge t
+    pt <- pt_norm/sum(pt_norm) # Vektor auf 1 normiert
+  
+    # Likelihood
+    like <- choose(x+y, x)*(t^x)*((1-t)^y) # Ist Bernoulli-verteilt
+  
+    # Evidence
+    evi <- sum(like*pt)
+  
+    # Posterior
+    post <- (like * pt) / evi
+    
+    # Plots
+    par(mfrow=c(3,1)) # Die naechsten drei Plots untereinander
+    plot(t, pt, main = "Prior", type = "h", lwd = 3) # Prior
+    abline(v = 0.5, col = "red", lwd = 2)
+    plot(t,like, main = "Likelihood", type = "h", lwd = 3) # Likelihood
+    abline(v = 0.5, col = "red", lwd = 2)
+    plot(t, post, main = "Posterior", type = "h", lwd = 3) # Posterior
+    abline(v = 0.5, col = "red", lwd = 2)
+    
+  })
+  
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+```
+
+
+4. Das "Boulder Problem"
+=====================================  
+    
+Row
+-------------------------------------
+
+### Die Problemstellung
+    
+Eine studentische Hilfskraft ist fuer einen Datensatz zustaendig, in welchem alle Waldbraende eines Jahres in Deutschland abgespeichert und ausgewertet werden.
+Die Analyse der vorherigen Jahren zeigt, dass 8% aller Jahre kein einziges unnatueriches Ereignis beinhalten.
+Am Ende des Jahres faellt dem Hiwi nun auf, dass der Datensatz lueckenhaft ist und zu einigen Braenden die Wetterdaten fehlen, die angeben ob ein Blitz als Ursache in Frage kommt! Zudem hat es bisher keinen einzigen vermerkten unnatuerlichen Waldbrand gegeben.
+
+Um eine Abschaetzung darueber geben zu koennen ob unter diesen Ereignissen ein Waldbrand unnatuerlichen Ursprungs sein koennte kramt er einen R-Code aus seinem Studium hervor.
+
+### Der Code 1
+
+Zuerst legen wir unsere Startparameter fest und erstellen unseren Startvektor.
+
+
+```{r echo = TRUE}
+# Startparameter
+n <- 100 # Gesamtanzahl Daten
+k <- 91 # Anzahl vollstaendige Ereignisse
+pU <- 0.08 # Wahrscheinlichkeit kein unnatÃ¼rlicher Waldbrand
+
+pcumstart <- 1-pU # Kummulative Wahrscheinlichkeit Unatuerliches Ereignis unter n Daten
+pstart <- pcumstart/n # Einzelwahrscheinlichkeit Unatuerlich
+pt <- c(rep(pstart, n), pU) # Startvektor
+```
+
+Row
+-------------------------------------
+
+### Der Code 2
+    
+Anschliessend werden die Wahrscheinlichkeiten der vollstaendigen Daten nacheinander 0 gesetzt und die restlichen Ereignisse wieder normalisiert.
+
+```{r echo = TRUE}
+i = 1
+while(i<k){
+  pt[i] <- 0 # i-te Stelle 0 setzen
+  pt <- pt/sum(pt) # rest von p normieren
+  i = i+1
+}
+
+```
+
+
+### Der Plot
+    
+Zur besseren Visualisierung werden die Ergebnisvariablen geplottet:
+
+```{r echo = FALSE}
+plot(c(1:(n+1)), pt, type = "h", lwd = 20, lend = 1,
+     ylab = "p(t)", xlab = "p(Data 1-n, Kein unnatuerliches Ereignis)", ylim = c(0,1))
+abline(0.5, 0, col = "red", lty = "dashed")
+text(30, 1, labels = (paste("P(Unnatuerlicher Brand) der restlichen Daten:", as.character(round(pt[n],3)))))
+text(20, 0.93, labels = (paste("P(Kein unnatuerlicher Brand):", as.character(round(pt[n+1],3)))))
+```
+
+
+5. Beta-Quiz {.storyboard}
+=====================================  
+    
+### Question 1: Why should we use the beta distribution and to what distribution is it related?
+
+```{r}
+val <- seq(0, 1, 0.01) # Spacing
+par(mfrow = c(1,1))
+plot(val, dbeta(val, 3, 3), cex.lab = 1.5, type = "l", lwd = 2, main = "a, b between 1 and 3", ylab = "dbeta")
+for (a in 1:3){
+  for (b in 1:3){
+  lines(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2, col = rgb(runif(1),runif(1),runif(1),1))}}
+
+```
+
+***
+
+The Beta distribution is a discrete distribution that looks similar to the binomial distribution. When applied to the interval [0, 1] it can be used to describe a prior or posterior probability distribution. For that, we can manipulate the values a and b or work just from a most probable value.
+
+In this plot you can see how the pdf is affected by different a and b values (between 1 and 3).
+
+
+### Question 2: What could we use the beta distribution for in the field of natural hazards?
+
+```{r}
+# Using the MODE of our prior  distribution
+gesamt <- 36
+w <- 0.7
+a <- w*(gesamt - 2) + 1
+b <- (1-w) * (gesamt - 2) + 1
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2, col = "firebrick1")
+print(c(a,b))
+```
+
+*** 
+
+The beta distribution is the perfect choice if we are looking for a prior distribution with a distinct maximum.
+For example: An old paper suggests that most wildfires out of 36 events reduce the vegetation by 70 %, but the data this value is based on is missing.
+Given this MODE we can plot a prior probability distribution using the beta distribution.
+
+### Question 3: How can we use the mean or mode to calculate a beta distribution?
+
+
+```{r, echo = FALSE}
+val <- seq(0, 1, 0.01) # Spacing
+par(mfrow=c(2,1)) # Plotlayout
+
+# Using the MEAN of our prior  distribution
+gesamt <- 10
+m <- 0.5
+a <- m * (gesamt)
+b <-  (a/m)-a
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2, col = "gold1", ylab = "dbeta")
+print(paste("a1 =", a, ", b1 =", b))
+
+# Using the MODE of our prior  distribution
+gesamt <- 100
+w <- 0.8
+a <- w*(gesamt - 2) + 1
+b <- (1-w) * (gesamt - 2) + 1
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2, col = "dodgerblue2", ylab = "dbeta")
+print(paste("a2 =", a, ", b2 =", b))
+
+
+```
+***
+```{r, echo = TRUE, eval = FALSE}
+val <- seq(0, 1, 0.01) # Spacing
+par(mfrow=c(2,1)) # Plotlayout
+
+# Using the MEAN of our prior  distribution
+gesamt <- 10
+m <- 0.5
+a <- m * (gesamt)
+b <-  (a/m)-a
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2)
+print(c(a,b))
+
+# Using the MODE of our prior  distribution
+gesamt <- 100
+w <- 0.8
+a <- w*(gesamt - 2) + 1
+b <- (1-w) * (gesamt - 2) + 1
+
+plot(val, dbeta(val, a, b), cex.lab = 1.5, type = "l", lwd = 2)
+print(c(a,b))
+
+```
+
+
+6. Normal Distribution
+=====================================  
+
+Column {data-width=400}
+-------------------------------------
+   
+### Where does the Gaussian distribution come from?
+
+The gaussian or normal distribution is a continuous probability distribution and has a symmetrical shape. Both sides of the symmetry axis resemble a simple exponential function.  
+
+
+```{r, echo = FALSE}
+x <- seq(1, 10, 0.1)
+y <- exp(-x)
+
+plot(x,y, type = "l", lwd = 2, col = "firebrick1", main = "Basic exponential function", ylab = "exp(-x)")
+grid()
+
+```
+
+ 
+### Usage
+__Typical applications of the normal distribution:__
+The importance of the Gaussian distribution comes from the fact that many natural processes follow this distribution such as errors from measurements, grades from an exam or molecule motion.
+
+
+__Usage in the field of natural hazards or data analysis:__
+As we learned, many natural processes follow the normal distribution and so can data which is derived from these processes. 
+In this example a dataset containing five normally distributed values needs to be testet if it is originated from a datastation with a given standart deviation and long term mean value.
+
+```{r, echo = TRUE}
+sigma <- 5
+data <- rnorm(5, runif(1, 50, 70), sigma) # Generates a normally distributed dataset containing 5 numbers
+testmu <- runif(1, 50, 70) # A mu for wich I want to test the data
+likelihood <- prod(dnorm(data, testmu, sigma)) # Likelihood p(testmu|data)
+
+print(data)
+print(paste("testmu=", testmu))
+print(paste("Likelihood", likelihood))
+```
+
+
+Column {data-width=600}
+-------------------------------------
+    
+### How does the normal distribution look like?
+
+The distribution can be described with two parameters: the mean, mode and median of the distribution is mu and the standart deviation is sigma.  
+$f(x| \mu, \sigma^2) = 1/(\sqrt{(2*pi*\sigma^2)} * exp(-((x-\mu)^2 / (2*\sigma^2))$  
+
+```{r, echo = FALSE}
+x2 <- seq(-5, 5, 0.1)
+plot(x2, dnorm(x2, 0, 1), type = "l", lwd = 2, col = "firebrick1", main = "Mu = 0, sigma = 1", ylab = "p(x), cumm. p(x)", ylim = c(0, 1)) # Plotting the desnsity function
+grid()
+lines(x2, pnorm(x2, 0, 1), type = "l", lwd = 2, col = "deepskyblue1") # Adding the distribution function
+legend(-4.5, 1, legend = c("Density function", "Distribution function"), col = c("firebrick1", "deepskyblue1"), lty = 1)
+```
+
+To see how sigma and mu change the shape of the density- and its distribution function I created a 3x3 plot with variing values.  
+
+```{r, echo = FALSE}
+x3 <- seq(-10, 10, 0.1)
+mus <- c(1,2,3) # Different mus
+sigmas <- c(1,2,3) # Different sigmas
+
+par(mfrow=c(3,3)) # 3x3 plot matrix
+for (i in 1:3){
+  for (t in 1:3){
+    plot(x3, dnorm(x3, mean = mus[i], sd = sigmas[t]), type = "l", 
+         lwd = 2, col = "turquoise3", ylab = "p(x)", xlim = c(-10, 10), 
+         ylim = c(0, 0.4), main = paste("mu =", i, ", sd =", t))
+    grid()
+  }
+}
+```
+
+We can see that mu does not change the form of the function but moves it along the x-axis. The standard deviation sigma changes the form of the bell.  
+As it is a probability distribution function, the area under the graph always remains 1.
