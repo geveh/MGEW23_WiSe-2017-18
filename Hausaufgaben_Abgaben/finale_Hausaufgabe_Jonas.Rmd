@@ -26,11 +26,11 @@ Bitte das Dokument im externen Browser anschauen, ansonsten funktionieren einige
 
 ##Bayes Rule {.tabset}
 
-###Erklärung und Herleitung
+###ErklÃ¤rung und Herleitung
 
-**Erklärung**
+**ErklÃ¤rung**
 
-Mit Hilfe des Gesetz von Bayes ist es möglich, von einer bedingten Wahrscheinlichkeit auf die Wahrscheinlichkeit für die umgekehrte Bedingung zu schließen. Im folgenden wird das Gesetz hergeleitet:
+Mit Hilfe des Gesetz von Bayes ist es mÃ¶glich, von einer bedingten Wahrscheinlichkeit auf die Wahrscheinlichkeit fÃ¼r die umgekehrte Bedingung zu schlieÃŸen. Im folgenden wird das Gesetz hergeleitet:
 
 ```{r}
 library(data.tree)
@@ -54,7 +54,7 @@ plot(prob1)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(A&B) </font>
 
 
-Das oben stehende Baumdiagramm zeigt die Wahrscheinlichkeiten für zwei verschiedene Ereignisse A und B. Zunächst gibt es zwei Äste, ob Ereignis A stattfindet ("A"), oder nicht stattfindet ("nA"). Aus diesen zwei Knoten führen dann jeweils 2 weitere Äste ab für die Wahrscheinlichkeit, ob Ereignis B stattfindet ("B"), oder nicht stattfindet ("nB"). Die Wahrscheinlichkeiten der beschrifteten Äste definieren sich wie folgt:
+Das oben stehende Baumdiagramm zeigt die Wahrscheinlichkeiten fÃ¼r zwei verschiedene Ereignisse A und B. ZunÃ¤chst gibt es zwei Ã„ste, ob Ereignis A stattfindet ("A"), oder nicht stattfindet ("nA"). Aus diesen zwei Knoten fÃ¼hren dann jeweils 2 weitere Ã„ste ab fÃ¼r die Wahrscheinlichkeit, ob Ereignis B stattfindet ("B"), oder nicht stattfindet ("nB"). Die Wahrscheinlichkeiten der beschrifteten Ã„ste definieren sich wie folgt:
 
 P(A): Die Wahrscheinlichkeit, dass Ereignis A auftritt
 
@@ -87,9 +87,9 @@ plot(prob2)
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="5"> P(B&A) </font>
 
-Dieses Baumdiagramm ist ähnlich des ersten mit dem Unterschied, dass nun das Ereignis B im ersten Schritt steht, sodass wir nun die bedingte Wahrscheinlichkeit P(A|B) auf dem entsprechenden Ast auftragen können.
+Dieses Baumdiagramm ist Ã¤hnlich des ersten mit dem Unterschied, dass nun das Ereignis B im ersten Schritt steht, sodass wir nun die bedingte Wahrscheinlichkeit P(A|B) auf dem entsprechenden Ast auftragen kÃ¶nnen.
 
-Die Wahrscheinlichkeiten P(A&B) und P(B&A) lassen sich beide über die Multiplikation der entsprechenden Äste berechnen:
+Die Wahrscheinlichkeiten P(A&B) und P(B&A) lassen sich beide Ã¼ber die Multiplikation der entsprechenden Ã„ste berechnen:
 
 
 $$P(A\&B) = P(A) \cdot P(B|A)$$
@@ -111,32 +111,32 @@ $$P(A\&B) = P(B\&A)$$
 
 $$P(A) \cdot P(B|A) = P(B) \cdot P(A|B)$$
 
-Schlussendlich lässt sich nach der gesuchten bedingten Wahrscheinlichkeit P(A|B) umstellen:
+Schlussendlich lÃ¤sst sich nach der gesuchten bedingten Wahrscheinlichkeit P(A|B) umstellen:
 
 $$P(A|B) = \frac{P(A) \cdot P(B|A)}{P(B)}$$
 
 
 **Beispiel**
 
-In vielen Fällen kann das Verhalten der Tierwelt ein Anzeichen auf bevorstehende Naturkatastrophen sein. So begeben sich Elefanten zB bereits vor einem Tsunami ins Landesinnere.
+In vielen FÃ¤llen kann das Verhalten der Tierwelt ein Anzeichen auf bevorstehende Naturkatastrophen sein. So begeben sich Elefanten zB bereits vor einem Tsunami ins Landesinnere.
 
-Vögel und Fledermäuse können das Erdmagnetfeld wahrnehmen. Da einem Erdbeben immer eine leichte Änderung des Magnetfeldes nahe des Epizentrums vorangeht, wird angenommen, dass man durch verändertes Flugverhalten von Vögeln und Fledermäusen auf ein bevorstehendes Erdbeben schließen kann. Im Ramen der ICARUSinitiative werden derzeit Bewegungsdaten von Vögeln gesammelt.
+VÃ¶gel und FledermÃ¤use kÃ¶nnen das Erdmagnetfeld wahrnehmen. Da einem Erdbeben immer eine leichte Ã„nderung des Magnetfeldes nahe des Epizentrums vorangeht, wird angenommen, dass man durch verÃ¤ndertes Flugverhalten von VÃ¶geln und FledermÃ¤usen auf ein bevorstehendes Erdbeben schlieÃŸen kann. Im Ramen der ICARUSinitiative werden derzeit Bewegungsdaten von VÃ¶geln gesammelt.
 
-Angenommen: In einigen Jahren gibt es insgesamt 500.000 Datensätze zum Fluverhalten von Vögeln zur Auswertung. In diesem Zeitraum gab es insgesamt 600 M>6 Erdbeben. 90% dieser Erdbeben ging ein verändertes Flugverhalten nahe des Epizentrums voran. Allerdings wurde in 2000 Datensätzen ein verändertes Flugverhalten beobachtet, ohne dass ein Erdbeben folgte.
+Angenommen: In einigen Jahren gibt es insgesamt 500.000 DatensÃ¤tze zum Fluverhalten von VÃ¶geln zur Auswertung. In diesem Zeitraum gab es insgesamt 600 M>6 Erdbeben. 90% dieser Erdbeben ging ein verÃ¤ndertes Flugverhalten nahe des Epizentrums voran. Allerdings wurde in 2000 DatensÃ¤tzen ein verÃ¤ndertes Flugverhalten beobachtet, ohne dass ein Erdbeben folgte.
 
-In einem Gebiet wird nun ein verändertes Flugverhalten beobachtet. Mit welcher Wahrscheinlichkeit wird es dort in der kommenden Woche ein Erdbeben geben? In dem entsprechenden Gebiet gibt es durchschnittlich alle 3 Jahre ein Erdbeben.
+In einem Gebiet wird nun ein verÃ¤ndertes Flugverhalten beobachtet. Mit welcher Wahrscheinlichkeit wird es dort in der kommenden Woche ein Erdbeben geben? In dem entsprechenden Gebiet gibt es durchschnittlich alle 3 Jahre ein Erdbeben.
 
 P(E): Die Wahrscheinlichkeit, dass ein Erdbeben auftritt
 
 P(kE): Die Wahrscheinlichkeit, dass kein Erdbeben auftritt
 
-P(F): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt
+P(F): Die Wahrscheinlichkeit, dass verÃ¤ndertes Flugverhalten auftritt
 
-P(F|E): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt unter der Bedingung, dass ein Erdbeben folgt
+P(F|E): Die Wahrscheinlichkeit, dass verÃ¤ndertes Flugverhalten auftritt unter der Bedingung, dass ein Erdbeben folgt
 
-P(F|kE): Die Wahrscheinlichkeit, dass verändertes Flugverhalten auftritt unter der Bedingung, dass kein Erdbeben folgt
+P(F|kE): Die Wahrscheinlichkeit, dass verÃ¤ndertes Flugverhalten auftritt unter der Bedingung, dass kein Erdbeben folgt
 
-P(E|F): Die Wahrscheinlichkeit, dass ein Erdbeben auftritt unter der Bedingung, dass verändertes Flugverhalten vorangegangen ist. Gesuchte Größe.
+P(E|F): Die Wahrscheinlichkeit, dass ein Erdbeben auftritt unter der Bedingung, dass verÃ¤ndertes Flugverhalten vorangegangen ist. Gesuchte GrÃ¶ÃŸe.
 
 ```{r}
 library(data.tree)
@@ -213,7 +213,7 @@ F <- E*FE+kE*FkE
 
 $$P(E|F) \approx 0,5921$$
 
-Mit einer Wahrscheinlichkeit von etwa 59,21% gibt es in diesem Gebiet in der kommenden Woche ein Erdbeben, nachdem ein verändertes Flugverhalten der Vögel beobachtet worden ist.
+Mit einer Wahrscheinlichkeit von etwa 59,21% gibt es in diesem Gebiet in der kommenden Woche ein Erdbeben, nachdem ein verÃ¤ndertes Flugverhalten der VÃ¶gel beobachtet worden ist.
 
 ###Interaktive ShinyApp
 
@@ -228,15 +228,15 @@ shinyUI <- fluidPage(
   titlePanel("Bayes Rule Demonstration"),
   sidebarLayout(
     sidebarPanel(
-      numericInput(inputId = "prior", label = "Wert für prior", min = 0, max = 1, value = 0.00001, step = 0.00001),
-      numericInput(inputId = "likelihood", label = "Wert für likelihood", min = 0, max = 1, value = 0.95, step = 0.01),
+      numericInput(inputId = "prior", label = "Wert fÃ¼r prior", min = 0, max = 1, value = 0.00001, step = 0.00001),
+      numericInput(inputId = "likelihood", label = "Wert fÃ¼r likelihood", min = 0, max = 1, value = 0.95, step = 0.01),
       selectInput(inputId = "graphstyle", label = "Art des Plots", choices = c("posterior - prior" = 1, "posterior - likelihood" = 2)),
       radioButtons(inputId = "dl", label = "file-Typ", choices = list("png", "pdf")),
       downloadButton(outputId = "down", label = "Download Plot")
     ),
     mainPanel(
       tabsetPanel(type = "tab",
-                  tabPanel("Erklärung",
+                  tabPanel("ErklÃ¤rung",
                            tags$div(
                              "Die Regel von Bayes erlaubt es, bei bedingten Wahrscheinlichkeiten die Bedingungen umzukehren:",
                              tags$br(),
@@ -266,7 +266,7 @@ shinyUI <- fluidPage(
                              tags$br(),
                              "P(B|A): Wahrscheinlichkeit, dass Michelle ein Erdbeben voraussagt unter der Bedingung, dass ein Erdbeben passieren wird (likelihood)",
                              tags$br(),
-                             "P(A|B): Wahrscheinlichkeit, dass ein Erdbeben passiert unter der Bedingung, dass Michelle es vorausgesagt hat (posterior) -> gesuchte Größe",
+                             "P(A|B): Wahrscheinlichkeit, dass ein Erdbeben passiert unter der Bedingung, dass Michelle es vorausgesagt hat (posterior) -> gesuchte GrÃ¶ÃŸe",
                              tags$br(),
                              tags$br(),
                              "P(A) = 0.00001",
@@ -286,7 +286,7 @@ shinyUI <- fluidPage(
                              "P(A|B) = 0.000189997",
                              tags$br(),
                              tags$br(),
-                             "Die Wahrscheinlichkeit, dass nach Michelles Vorhersage ein Erdbeben passiert, beträgt etwa 0.019%. Die Wahrscheinlichkeit für einen falschen Alarm durch ihre Vorhersage beträgt also 99.981%."
+                             "Die Wahrscheinlichkeit, dass nach Michelles Vorhersage ein Erdbeben passiert, betrÃ¤gt etwa 0.019%. Die Wahrscheinlichkeit fÃ¼r einen falschen Alarm durch ihre Vorhersage betrÃ¤gt also 99.981%."
                              
                            )
                            
@@ -307,7 +307,7 @@ shinyServer <- function(input, output){
   output$posterior <- renderText({
     A <- input$prior
     BA <- input$likelihood
-    paste("Für ein gegebenes Prior von", A, "und eine gegebene Likelihood von", BA, " ergibt sich eine posterior-Wahrscheinlichkeit von", (BA*A)/((BA*A)+((1-BA)*(1-A))))
+    paste("FÃ¼r ein gegebenes Prior von", A, "und eine gegebene Likelihood von", BA, " ergibt sich eine posterior-Wahrscheinlichkeit von", (BA*A)/((BA*A)+((1-BA)*(1-A))))
   })
   tablevalues <- reactive({
     A <- input$prior
@@ -382,9 +382,9 @@ shinyApp(shinyUI, shinyServer,
 
 ```
 
-Achtung: Für Windows-Nutzer funktioniert der Download-Button nur im externen Browser!
+Achtung: FÃ¼r Windows-Nutzer funktioniert der Download-Button nur im externen Browser!
 
-### Weiterführende Infos
+### WeiterfÃ¼hrende Infos
 
 Achtung: Nur im externen Browser!
 
@@ -394,7 +394,7 @@ Achtung: Nur im externen Browser!
 
 ## Bernoulli{.tabset}
 
-### Erklärung
+### ErklÃ¤rung
 
 
 
@@ -403,7 +403,7 @@ Die Formel von Bernoulli ist folgende:
 $$P(x=k) = p^k \cdot (1-p)^{n-k}$$
 
 
-Als Beispiel für die Verlässlichkeit von Augenzeugen:
+Als Beispiel fÃ¼r die VerlÃ¤sslichkeit von Augenzeugen:
 
 n = Gesamtzahl der Augenzeugen
 
@@ -415,11 +415,11 @@ p = Wahrscheinlichkeit, dass ein Augenzeuge richtig liegt
 
 P(x=k) = Likelihood
 
-Für eine Anzahl größer als ein Augenzeuge wird außerdem noch der Binomialkoeffizient n über k benötigt, um die Anzahl der möglichen Pfade zu berücksichtigen:
+FÃ¼r eine Anzahl grÃ¶ÃŸer als ein Augenzeuge wird auÃŸerdem noch der Binomialkoeffizient n Ã¼ber k benÃ¶tigt, um die Anzahl der mÃ¶glichen Pfade zu berÃ¼cksichtigen:
 
 $$\binom{n}{k} = \frac{n!}{k! \cdot (n-k)!}$$
 
-Sodass man letztendlich folgende Formel benötigt:
+Sodass man letztendlich folgende Formel benÃ¶tigt:
 
 $$P(x=k) = \binom{n}{k} \cdot p^k \cdot (1-p)^{n-k}$$
 
@@ -460,10 +460,10 @@ plot(x1, y1n, type = "h", lwd = 2, main = "Prior", xlab = "Theta", ylab = "p(The
 
 #Plot Likelihood
 
-#x-Achse für zukünftigen Plot
+#x-Achse fÃ¼r zukÃ¼nftigen Plot
 x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1))
 
-#y-Achse für zukünftigen Plot
+#y-Achse fÃ¼r zukÃ¼nftigen Plot
 y2 <- dbinom(k, size = n, prob = x2)
 
 
@@ -519,8 +519,8 @@ shinyServer <- function(input, output){
   
   output$priorgraph <- renderPlot({
     a <- input$accuracy
-    x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für priorplot
-    y1 <- pmin(x1, 1-x1) #y-Achse für priorplot
+    x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse fÃ¼r priorplot
+    y1 <- pmin(x1, 1-x1) #y-Achse fÃ¼r priorplot
     y1n <- y1/sum(y1) #prior-Werte auf 1 normiert
     plot(x1, y1n, type = "h", lwd = 2, main = "Prior", xlab = "Theta", ylab = "p(Theta)")
   })
@@ -530,8 +530,8 @@ shinyServer <- function(input, output){
     np <- input$npositive
     nn <- input$nnegative
     nt <- np+nn
-    x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für likelihoodplot
-    y2 <- dbinom(np, size = nt, prob = x2) #y-Achse für likelihoodplot
+    x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse fÃ¼r likelihoodplot
+    y2 <- dbinom(np, size = nt, prob = x2) #y-Achse fÃ¼r likelihoodplot
     plot((x2), (y2), type = "h", lwd = 2, main = "Likelihood", xlab = "Theta", ylab = "p(Theta)")
   })
   
@@ -563,12 +563,12 @@ shinyServer <- function(input, output){
       np <- input$npositive #Anzahl Positive
       nn <- input$nnegative #Anzahl Negative
       nt <- np+nn #Gesamtzahl
-      x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für priorplot
-      y1 <- pmin(x1, 1-x1) #y-Achse für priorplot
+      x1 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse fÃ¼r priorplot
+      y1 <- pmin(x1, 1-x1) #y-Achse fÃ¼r priorplot
       y1n <- y1/sum(y1) #prior-Werte auf 1 normiert
-      x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für likelihoodplot
-      y2 <- dbinom(np, size = nt, prob = x2) #y-Achse für likelihoodplot
-      x3 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse für posteriorplot
+      x2 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse fÃ¼r likelihoodplot
+      y2 <- dbinom(np, size = nt, prob = x2) #y-Achse fÃ¼r likelihoodplot
+      x3 <- seq(from = 1/(a+1), to = a/(a+1), by = 1/(a+1)) #x-Achse fÃ¼r posteriorplot
       ev <- sum(y1n*y2) #evidence
       y3 <- y1n*y2/ev #posterior
       par(mfrow=c(3,1)) #stelle Plots untereinander auf einer Seite dar
@@ -592,9 +592,9 @@ shinyApp(shinyUI, shinyServer,
 
 ```
 
-Achtung: Für Windows-Nutzer funktioniert der Download-Button nur im externen Browser!
+Achtung: FÃ¼r Windows-Nutzer funktioniert der Download-Button nur im externen Browser!
 
-### Weiterführende Infos
+### WeiterfÃ¼hrende Infos
 
 Achtung: Nur im externen Browser!
 
@@ -605,13 +605,13 @@ Achtung: Nur im externen Browser!
 
 ###Beispielaufgabe
 
-Ein Forscher untersucht Felsen an einem Strand. Nach einer Weile fällt ihm auf, dass er sein GPS-Gerät verloren hat und nimmt an, dass es bei einem der untersuchten Felsen sein muss. 10 Felsen stehen insgesamt zur Auswahl. Nachdem er bei 9 Felsen nichts gefunden hat: Wie hoch ist die Wahrscheinlichkeit eines Fundes beim 10. Felsen, wenn er das Gerät mit einer Wahrscheinlichkeit von 5% zu Hause gelassen hat?
+Ein Forscher untersucht Felsen an einem Strand. Nach einer Weile fÃ¤llt ihm auf, dass er sein GPS-GerÃ¤t verloren hat und nimmt an, dass es bei einem der untersuchten Felsen sein muss. 10 Felsen stehen insgesamt zur Auswahl. Nachdem er bei 9 Felsen nichts gefunden hat: Wie hoch ist die Wahrscheinlichkeit eines Fundes beim 10. Felsen, wenn er das GerÃ¤t mit einer Wahrscheinlichkeit von 5% zu Hause gelassen hat?
 
-**Lösungsansatz**
+**LÃ¶sungsansatz**
 
-Auch wenn es sich hierbei im Prinzip um Ziehen ohne Zurücklegen handelt, kann keine hypergeometrische Verteilung angewendet werden, da nicht alle Wahrscheinlichkeiten im gleichen Pfadsystem wiederzufinden sind.
+Auch wenn es sich hierbei im Prinzip um Ziehen ohne ZurÃ¼cklegen handelt, kann keine hypergeometrische Verteilung angewendet werden, da nicht alle Wahrscheinlichkeiten im gleichen Pfadsystem wiederzufinden sind.
 
-Die Anfangswahrscheinlichkeiten sind wie folgt: Jeder der 10 Felsen hat die gleiche Wahrscheinlichkeit, das GPS-Gerät zu haben. Die Wahrscheinlichkeit, dass es bei keinem Felsen ist, beträgt 5%. Daraus ergibt sich:
+Die Anfangswahrscheinlichkeiten sind wie folgt: Jeder der 10 Felsen hat die gleiche Wahrscheinlichkeit, das GPS-GerÃ¤t zu haben. Die Wahrscheinlichkeit, dass es bei keinem Felsen ist, betrÃ¤gt 5%. Daraus ergibt sich:
 
 $$p(1.F) = \frac{0.95}{10} = 0.095$$
 
@@ -625,15 +625,15 @@ p(1.K) = Wahrscheinlichkeit, dass es bei keinem Felsen ist
 
 
 
-Wenn nun ein Felsen untersucht worden ist ohne Fund, sind somit noch 9 Felsen im Spiel sowie die Wahrscheinlichkeit, dass es nirgends ist. Summiert man die verbleibenden Wahrscheinlichkeiten auf, ergeben diese allerdings nur noch 90.5% (da ja ein 9.5%-Felsen rausgenommen wurde). Da die Wahrscheinlichkeiten aber notwendigerweise insgesamt 100% ergeben müssen, muss durch die Summe der Wahrscheinlichkeiten geteilt werden:
+Wenn nun ein Felsen untersucht worden ist ohne Fund, sind somit noch 9 Felsen im Spiel sowie die Wahrscheinlichkeit, dass es nirgends ist. Summiert man die verbleibenden Wahrscheinlichkeiten auf, ergeben diese allerdings nur noch 90.5% (da ja ein 9.5%-Felsen rausgenommen wurde). Da die Wahrscheinlichkeiten aber notwendigerweise insgesamt 100% ergeben mÃ¼ssen, muss durch die Summe der Wahrscheinlichkeiten geteilt werden:
 
 $$p(2.F) = \frac{p(1.F)}{\sum{}p1} = \frac{0.095}{0.905} \approx 0.105$$
 
-Die Wahrscheinlichkeit, dass das GPS-Gerät beim 2. Felsen liegt, beträgt also nunmehr etwa 10.5%.
+Die Wahrscheinlichkeit, dass das GPS-GerÃ¤t beim 2. Felsen liegt, betrÃ¤gt also nunmehr etwa 10.5%.
 
 
 
-Für den 3. Felsen gilt also:
+FÃ¼r den 3. Felsen gilt also:
 
 $$p(2.F) = \frac{p(1.F)}{\sum{}p1} = \frac{0.095}{0.905} \approx 0.105$$
 
@@ -648,7 +648,7 @@ $$p(3.F) = \frac{p(2.F)}{\sum{}p2} = \frac{0.105}{0.8455} \approx 0.124$$
 
 
 
-###Lösung mit R
+###LÃ¶sung mit R
 
 Zuerst die Startvariablen festlegen
 
@@ -656,7 +656,7 @@ Zuerst die Startvariablen festlegen
 
 n <- 10 #Anzahl der Felsen
 pf0 <- 0.095 #Anfangswahrscheinlichkeit pro Felsen
-pk0 <- 0.05 #Anfangswahrscheinlichkeit für keinen Fund insgesamt
+pk0 <- 0.05 #Anfangswahrscheinlichkeit fÃ¼r keinen Fund insgesamt
 
 ```
 
@@ -706,9 +706,9 @@ E
 
 
 
-Die Wahrscheinlichkeit, dass das GPS-Gerät unter dem 10. Felsen liegt, beträgt also etwa 65.5%
+Die Wahrscheinlichkeit, dass das GPS-GerÃ¤t unter dem 10. Felsen liegt, betrÃ¤gt also etwa 65.5%
 
-Da für die Lösung nicht nach den Zwischenschritten gefragt ist, geht es auch einfacher:
+Da fÃ¼r die LÃ¶sung nicht nach den Zwischenschritten gefragt ist, geht es auch einfacher:
 
 Erneut die Startvariablen festlegen:
 
@@ -716,7 +716,7 @@ Erneut die Startvariablen festlegen:
 
 n <- 10 #Anzahl der Felsen
 pf0 <- 0.095 #Anfangswahrscheinlichkeit pro Felsen
-pk0 <- 0.05 #Anfangswahrscheinlichkeit für keinen Fund insgesamt
+pk0 <- 0.05 #Anfangswahrscheinlichkeit fÃ¼r keinen Fund insgesamt
 
 ```
 
@@ -724,7 +724,7 @@ pk0 <- 0.05 #Anfangswahrscheinlichkeit für keinen Fund insgesamt
 
 
 
-Mit pg wird nun eine Zahlenfolge definiert, in der die Wahrscheinlichkeiten für jeden Felsen und die Wahrscheinlichkeit keines Fundes aufgelistet sind:
+Mit pg wird nun eine Zahlenfolge definiert, in der die Wahrscheinlichkeiten fÃ¼r jeden Felsen und die Wahrscheinlichkeit keines Fundes aufgelistet sind:
 
 ```{r, echo = TRUE}
 
@@ -745,9 +745,9 @@ Die Werte der Zahlenreihe sollen nach und nach bearbeitet werden. Dazu wird i de
 
 "pg <- pg/sum(pg)"" bedeutet, dass die einzelnen Wahrscheinlichkeiten danach wieder durch die Summe aller Wahrscheinlichkeiten geteilt werden sollen. Das ist wichtig, damit die Summe aller Wahrscheinlichkeiten wieder 1 ergibt
 
-"while(i<10)" bedeutet, dass diese Operation so lange durchgeführt werden soll, bis man an der neunten Stelle in der Zahlenfolge angekommen ist.
+"while(i<10)" bedeutet, dass diese Operation so lange durchgefÃ¼hrt werden soll, bis man an der neunten Stelle in der Zahlenfolge angekommen ist.
 
-"i=i+1" bedeutet, dass am Ende jeder Operation zur nächsten Stelle in der Zahlenfolge gegangen werden soll.
+"i=i+1" bedeutet, dass am Ende jeder Operation zur nÃ¤chsten Stelle in der Zahlenfolge gegangen werden soll.
 
 
 
@@ -763,12 +763,12 @@ while (i<10) {
 pg
 ```
 
-Wie man sieht erhält man dadurch eine Zahlenfolge. Die ersten 9 Werte betragen null (das sind die Wahrscheinlichkeiten der ersten neun Felsen). Danach kommt die Wahrscheinlichkeit für den letzten Felsen und als letzter Wert die Wahrscheinlichkeit keines Funds.
+Wie man sieht erhÃ¤lt man dadurch eine Zahlenfolge. Die ersten 9 Werte betragen null (das sind die Wahrscheinlichkeiten der ersten neun Felsen). Danach kommt die Wahrscheinlichkeit fÃ¼r den letzten Felsen und als letzter Wert die Wahrscheinlichkeit keines Funds.
 
 
 ### Eigenes Beispiel
 
-Ein Dorf liegt an einem Hang. Der Hang ist schon durch mehrfache Hangrutschen bekannt, die Schäden an manchen Häusern verursacht haben. Ein Team fährt los, um herauszufinden ob man den Hang an gewissen Stellen stabilisieren kann. Diese Stellen wurden im Vorfeld bestimmt und haben alle die gleiche Wahrscheinlichkeit. Nachdem 19 von 25 Stellen untersucht worden sind, hat man noch keine gute Stelle gefunden. Wie groß ist jeweils die Wahrscheinlichkeit, an den nächsten Stellen einen Punkt zum stabilisieren zu finden? Erfahrungsgemäß gibt es nur bei 30% solcher Hänge überhaupt eine Möglichkeit, diese effektiv zu stabilisieren.
+Ein Dorf liegt an einem Hang. Der Hang ist schon durch mehrfache Hangrutschen bekannt, die SchÃ¤den an manchen HÃ¤usern verursacht haben. Ein Team fÃ¤hrt los, um herauszufinden ob man den Hang an gewissen Stellen stabilisieren kann. Diese Stellen wurden im Vorfeld bestimmt und haben alle die gleiche Wahrscheinlichkeit. Nachdem 19 von 25 Stellen untersucht worden sind, hat man noch keine gute Stelle gefunden. Wie groÃŸ ist jeweils die Wahrscheinlichkeit, an den nÃ¤chsten Stellen einen Punkt zum stabilisieren zu finden? ErfahrungsgemÃ¤ÃŸ gibt es nur bei 30% solcher HÃ¤nge Ã¼berhaupt eine MÃ¶glichkeit, diese effektiv zu stabilisieren.
 
 ```{r, echo = TRUE}
 
@@ -846,7 +846,7 @@ HR
 
 ```
 
-Die erste Spalte beinhaltet die Wahrscheinlichkeit für die x-te Stelle (20., 21 etc.), die zweite Spalte beinhaltet die Wahrscheinlichkeit dass der Hang insgesamt nicht stabilisiert werden kann.
+Die erste Spalte beinhaltet die Wahrscheinlichkeit fÃ¼r die x-te Stelle (20., 21 etc.), die zweite Spalte beinhaltet die Wahrscheinlichkeit dass der Hang insgesamt nicht stabilisiert werden kann.
 
 
 ## Betaverteilung{.tabset}
@@ -856,7 +856,7 @@ Die erste Spalte beinhaltet die Wahrscheinlichkeit für die x-te Stelle (20., 21 
 
 
 
-**Wie lauten die Formeln für die Beta-Verteilung?**
+**Wie lauten die Formeln fÃ¼r die Beta-Verteilung?**
 
 
 
@@ -876,10 +876,10 @@ $$a,b > 0$$
 
 
 
-**Für welchen Fall wird eine Betaverteilung angewendet?**
+**FÃ¼r welchen Fall wird eine Betaverteilung angewendet?**
 
 
-Für eine prior-Wahrscheinlichkeitsverteilung eines Parameters, der die Wahrscheinlichkeit für Erfolg beschreibt.
+FÃ¼r eine prior-Wahrscheinlichkeitsverteilung eines Parameters, der die Wahrscheinlichkeit fÃ¼r Erfolg beschreibt.
 
 
 
@@ -892,7 +892,7 @@ Der "mean" ist der Erwartungswert und berechnet sich wie folgt:
 
 $$\mu = \frac{a}{a+b}$$
 
-Der "mode" ist der höchste Punkt in der Dichtefunktion und berechnet sich folgendermaßen:
+Der "mode" ist der hÃ¶chste Punkt in der Dichtefunktion und berechnet sich folgendermaÃŸen:
 
 $$\omega = \frac{a-1}{a+b-2}$$
 
@@ -907,8 +907,8 @@ shinyUI <- fluidPage(
   titlePanel("Betaverteilung"),
   sidebarLayout(
     sidebarPanel(
-      numericInput(inputId = "aval", label = "Wert für a", min = 0, value = 0, step = 1),
-      numericInput(inputId = "bval", label = "Wert für b", min = 0, value = 0, step = 1)
+      numericInput(inputId = "aval", label = "Wert fÃ¼r a", min = 0, value = 0, step = 1),
+      numericInput(inputId = "bval", label = "Wert fÃ¼r b", min = 0, value = 0, step = 1)
     ),
     mainPanel(plotOutput("betagraph"))
   )
@@ -932,16 +932,16 @@ shinyApp(shinyUI, shinyServer,
 
 ## Normalverteilung{.tabset}
 
-### Erklärung
+### ErklÃ¤rung
 
 Die Normalverteilung ist eine stetige Wahrscheinlichkeitsverteilung, die angewendet werden kann, wenn Messwerte symmetrisch um einen Erwartungswert liegen. Eine solche Verteilung wird auch Gauss-Kurve genannt.
 
 $$f(x) = \frac{1}{\sigma \cdot \sqrt{2 \pi}} \cdot e^{\frac{-(x-\mu)^2}{2 \cdot \sigma^2}}$$
 
 
-Die Gauss-Kurve ist immer durch einen Erwartungswert $\mu$ und eine Standardabweichung $\sigma$ definiert. Während $e^{-x^2}$ für die Grundform der Glockenkurve verantwortlich ist, sorgt der Zähler im Exponent für die Verschiebung nach rechts oder links zum Erwartungswert $\mu$. Der Nenner im Exponent macht die Kurve schmaler oder breiter, und der Vorfaktor vor dem e streckt oder staucht die Kurve.
+Die Gauss-Kurve ist immer durch einen Erwartungswert $\mu$ und eine Standardabweichung $\sigma$ definiert. WÃ¤hrend $e^{-x^2}$ fÃ¼r die Grundform der Glockenkurve verantwortlich ist, sorgt der ZÃ¤hler im Exponent fÃ¼r die Verschiebung nach rechts oder links zum Erwartungswert $\mu$. Der Nenner im Exponent macht die Kurve schmaler oder breiter, und der Vorfaktor vor dem e streckt oder staucht die Kurve.
 
-Der Erwartungswert $\mu$ ist der höchste Wert der Kurve. Die Standardabweichung $\sigma$ beschreibt die Distanz zwischen $\mu$ und der Stelle, an der die Gauss-Kurve die größte Steigung hat, jeweils in beide Richtungen:
+Der Erwartungswert $\mu$ ist der hÃ¶chste Wert der Kurve. Die Standardabweichung $\sigma$ beschreibt die Distanz zwischen $\mu$ und der Stelle, an der die Gauss-Kurve die grÃ¶ÃŸte Steigung hat, jeweils in beide Richtungen:
 
 ```{r, echo = FALSE}
 plot(
@@ -966,11 +966,11 @@ text(1.05, 0.4, expression(paste(sigma, " = 0.5", sep = "")), adj = 0, col = "me
 
 
 
-Um Wahrscheinlichkeiten zu berechnen, wird die Fläche unter der Kurve berechnet. Man kann daher Wahrscheinlichkeiten nur noch für einen Bereich, aber nicht mehr für diskrete Werte berechnen. Die Fläche unter der gesamten Kurve muss eins ergeben:
+Um Wahrscheinlichkeiten zu berechnen, wird die FlÃ¤che unter der Kurve berechnet. Man kann daher Wahrscheinlichkeiten nur noch fÃ¼r einen Bereich, aber nicht mehr fÃ¼r diskrete Werte berechnen. Die FlÃ¤che unter der gesamten Kurve muss eins ergeben:
 
 $$\int_{-\infty}^{\infty} f(x) dx = 1$$
 
-Es sind $\sigma$-Umgebungen um den Erwartungswert $\mu$ und die Fläche, die sie umschließen, definiert:
+Es sind $\sigma$-Umgebungen um den Erwartungswert $\mu$ und die FlÃ¤che, die sie umschlieÃŸen, definiert:
 
 $$p(\mu - \sigma \leqslant x \leqslant \mu + \sigma ) = 68.3\%$$
 
@@ -978,7 +978,7 @@ $$p(\mu - 2\sigma \leqslant x \leqslant \mu + 2\sigma ) = 95.4\%$$
 
 $$p(\mu - 3\sigma \leqslant x \leqslant \mu + 3\sigma ) = 99.7\%$$
 
-Diese heißen respektive 1-, 2- und 3-$\sigma$-Umgebung. Folgender Graph zeigt die 1-$\sigma$-Umgebung:
+Diese heiÃŸen respektive 1-, 2- und 3-$\sigma$-Umgebung. Folgender Graph zeigt die 1-$\sigma$-Umgebung:
 
 ```{r, echo = FALSE}
 
@@ -1005,9 +1005,9 @@ text(0.55, 0.4, expression(paste("1", sigma, "-Umgebung", sep = "")), adj = 0, c
 
 ### Beispielaufgabe
 
-Für Erdbeben in einer Region sind die Magnituden normalverteilt. Die meisten Erdbeben besitzen eine Magnitude von 6, die Standardabweichung beträgt 0.8. Mit welcher Wahrscheinlichkeit hat das nächste Erdbeben eine Magnitude von 7.5 oder höher?
+FÃ¼r Erdbeben in einer Region sind die Magnituden normalverteilt. Die meisten Erdbeben besitzen eine Magnitude von 6, die Standardabweichung betrÃ¤gt 0.8. Mit welcher Wahrscheinlichkeit hat das nÃ¤chste Erdbeben eine Magnitude von 7.5 oder hÃ¶her?
 
-Folgender Graph zeigt die Gauss-Kurve für diesen Fall. Die graue Fläche ist gesucht.
+Folgender Graph zeigt die Gauss-Kurve fÃ¼r diesen Fall. Die graue FlÃ¤che ist gesucht.
 
 
 ```{r, echo = FALSE}
@@ -1037,7 +1037,7 @@ Gesucht ist also:
 
 $$\int_{7.5}^{\infty} f(x) dx$$
 
-Mit R lässt sich das Integral berechnen:
+Mit R lÃ¤sst sich das Integral berechnen:
 
 ```{r}
 
@@ -1047,9 +1047,9 @@ integrate(f, 7.5, 99, subdivisions = 100L)
 
 ```
 
-Die Wahrscheinlichkeit, dass das nächste Erdbeben eine Magnitude von 7.5 oder höher hat, beträgt also ungefähr 3.04%.
+Die Wahrscheinlichkeit, dass das nÃ¤chste Erdbeben eine Magnitude von 7.5 oder hÃ¶her hat, betrÃ¤gt also ungefÃ¤hr 3.04%.
 
-###Weiterführende Infos
+###WeiterfÃ¼hrende Infos
 
 Achtung: Nur im externen Browser!
 
@@ -1061,3 +1061,14 @@ Achtung: Nur im externen Browser!
 
 
 
+## Referenzen
+
+Formatierungen: http://rmarkdown.rstudio.com/html_document_format.html
+
+Clean R Graphs: http://shinyapps.org/apps/RGraphCompendium/index.php
+
+Benutzung von data.tree: https://cran.r-project.org/web/packages/data.tree/vignettes/data.tree.html
+
+R Shiny Tutorials: Abhinav Agrawal, https://www.youtube.com/channel/UCbck9jjLpwj7U6HHNps_9Gw
+
+Statistik ErklÃ¤rungen: Mathe by Daniel Jung, https://www.youtube.com/user/beckuplearning
