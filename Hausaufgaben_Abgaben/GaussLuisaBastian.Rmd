@@ -1,0 +1,49 @@
+---
+title: 'Gaussian Distributions: Characteristics and Applications'
+author: "Luisa Hoße, Bastian Steinke"
+date: " 13th February 2018"
+output: 
+  tufte: 
+    tufte::tufte_html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Definition
+
+The __Gaussian__ or __Normal__ distribution, named after Carl Friedrich Gauß (1777-1855), is one of the most important and widespread continuous probability distributions.
+
+Normal distributions are defined as
+
+
+$$p(x |\mu, \sigma) = \frac{1}{\sqrt{2\pi}\sigma}\exp^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2},$$
+with $\mu$ being the mean (the expected value), $\sigma$ the standard deviation and $\sigma^2$ the variance (expresses the accuracy of measurements).
+
+
+# Characteristics
+
+- the Gaussian distribution originates from the assumption that summed-up, random, independent measurements are normally distributed, e.g the summed result of rolls of two or more dices
+- for $\mu = 0$ and $\sigma = 1$, the distribution is called 'standard normal distribution' and yields a symmetrical probability density distribution curve (example below)
+```{r, echo = FALSE}
+x <- seq(-10, 10, 0.1)
+plot(x, dnorm(x, 0, 1), type = "l", lwd = 3, col = "red", ylab = "φ(x)", ylim = c(0, 1)) 
+grid()
+```
+- the probability density of a Gaussian distribution is also called 'Gaussian function' 
+
+# Areas of application
+
+Since the Gaussian distribution expresses the distribution of random variables, it is usually applied to express the noise appearing within a number measurements, which can relate to the distribution of measuring errors and inaccuracies of an experiment. 
+Basically, many random processes, such as Brownian motion or particle motion in general, are governed by normal distributions. 
+
+## Example
+
+Therefore, Gaussian distribution can also be used to express the probability of an event. In natural hazards, for instance, extreme events, which appear as independent and random variables, could be analysed quantitatively in terms of their expected magnitude so that forecasts and warnings can be adapted. 
+
+The magnitude of volcano-tectonic events prior to an eruption are usually between 1 and 3. A theoretical measurement series acquired over a certain time interval could be described with a Gaussian distribution, given a known average magnitude of VT-events and standard deviation of the measuring station: 
+```{r, echo = TRUE}
+rnorm(10, mean = 2, sd = 1)
+```
+In turn, both $\mu$ and $\sigma$ can be calculated based on a given measurement series to express the probability (or probability density) of one or more events to occur.
